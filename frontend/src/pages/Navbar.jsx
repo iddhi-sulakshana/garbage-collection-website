@@ -69,8 +69,7 @@ export default function Navbar() {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = (path) => {
-    navigate(path);
+  const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
   return (
@@ -165,11 +164,15 @@ export default function Navbar() {
                   {/* Menu items */}
                   <Typography textAlign="center">{user?.name}</Typography>
                   {settings.map((setting) => (
-                    <MenuItem
-                      key={setting.name}
-                      onClick={() => handleCloseUserMenu(setting.path)}
-                    >
-                      <Typography textAlign="center">{setting.name}</Typography>
+                    <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
+                      <Link
+                        to={setting.path}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
+                        <Typography textAlign="center">
+                          {setting.name}
+                        </Typography>
+                      </Link>
                     </MenuItem>
                   ))}
                 </Menu>

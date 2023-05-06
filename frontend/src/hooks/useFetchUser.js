@@ -30,6 +30,7 @@ export default function useFetchUser(token) {
       }, 1000);
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
   }
 
