@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import CustomMap from "../component/CustomMap";
+import LocationsMap from "../component/LocationsMap";
 import { useAppBarHei } from "../hooks/AppContext";
 import { Box, Fab } from "@mui/material";
 import GridList from "../component/GridList";
-import useFetchLocations from "../hooks/useFetchLocations";
-import Loader from "../component/Loader";
+import Loader, { LoaderError } from "../component/Loader";
 import { Refresh } from "@mui/icons-material";
 import LocationDetails from "../component/LocationDetails";
+import useFetchCollectings from "../hooks/useFetchCollectings";
 
 export default function Home() {
   const { height } = useAppBarHei();
   const [refresh, setRefresh] = useState(0);
-  const { locations, loading, error } = useFetchLocations(refresh);
+  const {
+    collectings: locations,
+    loading,
+    error,
+  } = useFetchCollectings(refresh);
   const [clicked, setClicked] = useState(null);
   return (
     <Box
@@ -41,12 +45,13 @@ export default function Home() {
         ) : loading ? (
           <Loader />
         ) : error ? (
-          "Error Retrieving Data"
+          <LoaderError error={error} />
         ) : (
           <GridList
+            title="Collecting Places"
             data={locations}
-            clicked={clicked}
             setClicked={setClicked}
+            type={"location"}
           />
         )}
       </Box>
@@ -59,10 +64,10 @@ export default function Home() {
         {loading ? (
           <Loader />
         ) : error ? (
-          "Error Retrieving Data"
+          <LoaderError error={error} />
         ) : (
           <>
-            <CustomMap
+            <LocationsMap
               locations={locations}
               setClicked={setClicked}
               clicked={clicked}

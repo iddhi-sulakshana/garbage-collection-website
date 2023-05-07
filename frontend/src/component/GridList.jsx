@@ -6,9 +6,12 @@ import {
   styled,
   Box,
   CardActionArea,
+  Typography,
 } from "@mui/material";
 import React from "react";
-import DataCard from "./DataCard";
+import LocationCard from "./Cards/LocationCard";
+import AccountCard from "./Cards/AccountCard";
+import ArticleCard from "./Cards/ArticleCard";
 
 const theme = new createTheme();
 const Item = styled(Paper)(({ theme }) => ({
@@ -17,36 +20,54 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
   height: "auto",
 }));
-export default function GridList({ data, clicked, setClicked }) {
+export default function GridList({ data, setClicked, title, type }) {
   return (
-    <Grid item xs={6}>
-      <ThemeProvider theme={theme}>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { md: "1fr" },
-            gap: 2,
-          }}
-        >
-          {data.map((item, index) => (
-            <Item elevation={3} key={index}>
-              {clicked - 1 === index ? (
-                <DataCard data={item} />
-              ) : (
+    <>
+      <Typography
+        component="div"
+        variant="h5"
+        textAlign="center"
+        sx={{ pb: 2 }}
+      >
+        {title}
+      </Typography>
+      <Grid item xs={6}>
+        <ThemeProvider theme={theme}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { md: "1fr" },
+              gap: 2,
+            }}
+          >
+            {data.map((item, index) => (
+              <Item elevation={3} key={index}>
                 <CardActionArea
                   onClick={() => {
+                    if (type === "location") {
+                      setTimeout(() => {
+                        setClicked(index + 1);
+                      });
+                      return;
+                    }
                     setTimeout(() => {
-                      setClicked(index + 1);
+                      setClicked(item);
                     }, 300);
                   }}
                 >
-                  <DataCard data={item} />
+                  {type === "location" || type === "collectings" ? (
+                    <LocationCard data={item} />
+                  ) : type === "accounts" ? (
+                    <AccountCard data={item} />
+                  ) : type === "articles" ? (
+                    <ArticleCard data={item} />
+                  ) : null}
                 </CardActionArea>
-              )}
-            </Item>
-          ))}
-        </Box>
-      </ThemeProvider>
-    </Grid>
+              </Item>
+            ))}
+          </Box>
+        </ThemeProvider>
+      </Grid>
+    </>
   );
 }

@@ -5,10 +5,12 @@ export default function useFetchUser(token) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true);
+    setError(null);
     if (!token) {
       setUser(null);
-      setError(null);
-      setLoading(true);
+      setError("No token provided");
+      setLoading(false);
       return;
     }
     fetchUser();
@@ -18,12 +20,13 @@ export default function useFetchUser(token) {
     try {
       setTimeout(() => {
         setUser({
+          id: "1",
           name: "John Doe",
           email: "John.Doe@gmail.com",
           age: 25,
           address: "1234 Main St",
           role: "admin",
-          profile:
+          picture:
             "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg",
         });
         setLoading(false);

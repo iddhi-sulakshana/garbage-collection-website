@@ -13,6 +13,7 @@ export default function CustomThemeProvider({ children }) {
           sx={{
             marginTop: 8,
             display: "flex",
+            position: "relative",
             flexDirection: "column",
             alignItems: "center",
           }}
