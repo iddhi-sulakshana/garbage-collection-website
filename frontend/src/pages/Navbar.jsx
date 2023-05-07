@@ -16,16 +16,19 @@ import { Link, useNavigate } from "react-router-dom";
 import Logo from "../component/Logo";
 import { useEffect, useRef, useState } from "react";
 import { useAppBarHei, useToken, useUser } from "../hooks/AppContext";
+import { Loader1 } from "../component/Loader";
 
 const commonPages = [{ name: "Home", path: "/" }];
-const adminPages = [{ name: "Admin", path: "/admin" }];
+const adminPages = [
+  { name: "Accounts", path: "/accounts" },
+  { name: "Articles", path: "/create-articles" },
+  { name: "Collecting Places", path: "/create-collecting" },
+];
 const gtfPages = [{ name: "GTF", path: "/gtf" }];
 const csPages = [{ name: "CS", path: "/cs" }];
 const gcPages = [{ name: "GC", path: "/gc" }];
 const settings = [
   { name: "Profile", path: "/profile" },
-  { name: "Account", path: "/account" },
-  { name: "Dashboard", path: "/dashboard" },
   { name: "Logout", path: "/logout" },
 ];
 
@@ -42,19 +45,18 @@ export default function Navbar() {
 
   useEffect(() => {
     setHeight(appBarRef.current.clientHeight);
-    if (!token) return;
+    if (!token || !user) return setPages([...commonPages]);
     if (loading) return;
     if (error) alert("Error Getting User details");
-    if (user) {
-      if (user.role === "admin") {
-        setPages([...commonPages, ...adminPages]);
-      } else if (user.role === "gtf") {
-        setPages([...commonPages, ...gtfPages]);
-      } else if (user.role === "cs") {
-        setPages([...commonPages, ...csPages]);
-      } else if (user.role === "gc") {
-        setPages([...commonPages, ...gcPages]);
-      }
+
+    if (user.role === "admin") {
+      setPages([...commonPages, ...adminPages]);
+    } else if (user.role === "gtf") {
+      setPages([...commonPages, ...gtfPages]);
+    } else if (user.role === "cs") {
+      setPages([...commonPages, ...csPages]);
+    } else if (user.role === "gc") {
+      setPages([...commonPages, ...gcPages]);
     }
   }, [token, loading, error, user, setHeight]);
 
@@ -76,7 +78,7 @@ export default function Navbar() {
     <AppBar position="static" ref={appBarRef}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Logo />
+          <Logo role={user?.role} />
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -118,7 +120,7 @@ export default function Navbar() {
               ))}
             </Menu>
           </Box>
-          <Logo mobile={true} />
+          <Logo mobile={true} role={user?.role} />
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
@@ -142,7 +144,11 @@ export default function Navbar() {
               <>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt={user?.name} src={user?.profile} />
+                    {loading ? (
+                      <Loader1 />
+                    ) : (
+                      <Avatar alt={user?.name} src={user?.picture} />
+                    )}
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -162,7 +168,9 @@ export default function Navbar() {
                   onClose={handleCloseUserMenu}
                 >
                   {/* Menu items */}
-                  <Typography textAlign="center">{user?.name}</Typography>
+                  <Typography textAlign="center">
+                    {loading ? "Loading" : user?.name}
+                  </Typography>
                   {settings.map((setting) => (
                     <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
                       <Link

@@ -39,19 +39,19 @@ export default function Login() {
       email: data.get("email"),
       password: data.get("password"),
     };
-    let error = false;
-    if (
-      submitData.email.trim().length === 0 ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submitData.email)
-    ) {
-      error = true;
-      setEmailError(true);
-    }
-    if (submitData.password.trim().length === 0) {
-      error = true;
-      setPasswordError(true);
-    }
-    if (error) return;
+    // let error = false;
+    // if (
+    //   submitData.email.trim().length === 0 ||
+    //   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submitData.email)
+    // ) {
+    //   error = true;
+    //   setEmailError(true);
+    // }
+    // if (submitData.password.trim().length === 0) {
+    //   error = true;
+    //   setPasswordError(true);
+    // }
+    // if (error) return;
 
     const response = validate(submitData);
 
@@ -158,9 +158,13 @@ export default function Login() {
 }
 
 function validate(data) {
-  if (data.email !== "123@asd.co")
-    return { status: 401, message: "Invalid email" };
-  if (data.password !== "123")
-    return { status: 401, message: "Invalid password" };
-  return { status: 200, message: "Success" };
+  return { status: 200, message: "Sucecss" };
 }
+
+// function validate(data) {
+//   if (data.email !== "123@asd.co")
+//     return { status: 401, message: "Invalid email" };
+//   if (data.password !== "123")
+//     return { status: 401, message: "Invalid password" };
+//   return { status: 200, message: "Success" };
+// }

@@ -2,18 +2,13 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import Loader from "./Loader";
 
-const containerStyle = {
-  width: "100%",
-  height: "100%",
-};
-
 // coordinates for colombo
 const center = {
   lat: 6.9271,
   lng: 79.8612,
 };
 
-function MyComponent({ locations, setClicked, clicked }) {
+function LocationsMap({ locations, setClicked, clicked }) {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: "AIzaSyAmL07kRQ1S3u2ldQ5rm9L6UzSQFpDkxPI",
@@ -25,21 +20,37 @@ function MyComponent({ locations, setClicked, clicked }) {
   const clickedIcon = useMemo(() => {
     return {
       url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+      size: {
+        height: 32,
+        width: 32,
+      },
+      g: undefined,
+      h: undefined,
     };
   }, []);
   const defaultIcon = useMemo(() => {
     return {
       url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+      size: {
+        height: 32,
+        width: 32,
+      },
+      g: undefined,
+      h: undefined,
     };
   }, []);
-
   const markerClick = useCallback(
-    function callback(marker, index) {
+    function callback(marker, index, click) {
       markers.forEach((item) => {
         item.setIcon(defaultIcon);
       });
-      marker.setIcon(clickedIcon);
-      setClicked(index + 1);
+      if (click === index + 1) {
+        marker.setIcon(defaultIcon);
+        setClicked(null);
+      } else {
+        marker.setIcon(clickedIcon);
+        setClicked(index + 1);
+      }
     },
     [clickedIcon, defaultIcon, markers, setClicked]
   );
@@ -54,7 +65,7 @@ function MyComponent({ locations, setClicked, clicked }) {
           title: location.name,
         });
         marker.setIcon(defaultIcon);
-        marker.addListener("click", () => markerClick(marker, index));
+        marker.addListener("click", () => markerClick(marker, index, clicked));
         newMarkers.push(marker);
       });
       // eslint-disable-next-line
@@ -83,7 +94,10 @@ function MyComponent({ locations, setClicked, clicked }) {
 
   return isLoaded ? (
     <GoogleMap
-      mapContainerStyle={containerStyle}
+      mapContainerStyle={{
+        width: "100%",
+        height: "100%",
+      }}
       center={center}
       zoom={12}
       onLoad={onLoadMap}
@@ -94,4 +108,4 @@ function MyComponent({ locations, setClicked, clicked }) {
   );
 }
 
-export default memo(MyComponent);
+export default memo(LocationsMap);

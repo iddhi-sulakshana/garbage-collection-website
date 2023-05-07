@@ -1,9 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
+import getRole from "../utils/getRole";
 
-export default function Logo({ mobile }) {
-  const title = "LOGO";
+export default function Logo({ mobile, role }) {
+  const title = "CMC";
+  const dRole = getRole(role);
   if (mobile) {
     return (
       <Link
@@ -36,6 +38,7 @@ export default function Logo({ mobile }) {
           }}
         >
           {title}
+          <Typography variant="caption">{dRole}</Typography>
         </Typography>
       </Link>
     );
@@ -70,6 +73,7 @@ export default function Logo({ mobile }) {
         }}
       >
         {title}
+        <Typography variant="caption">{dRole}</Typography>
       </Typography>
     </Link>
   );

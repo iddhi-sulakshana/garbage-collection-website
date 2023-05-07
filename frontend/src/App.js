@@ -8,7 +8,10 @@ import Navbar from "./pages/Navbar";
 import Logout from "./pages/Logout";
 import Notfound from "./pages/Notfound";
 import { useSetToken } from "./hooks/AppContext";
-
+import Profile from "./pages/Profile";
+import Accounts from "./pages/Accounts";
+import Articles from "./pages/Articles";
+import Collecting from "./pages/Collecting";
 export default function App() {
   const setToken = useSetToken();
   const token = localStorage.getItem("x-token");
@@ -26,6 +29,10 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/ondev" element={<OnDev />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/accounts" element={<Accounts />} />
+        <Route path="/create-articles" element={<Articles />} />
+        <Route path="/create-collecting" element={<Collecting />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </>

@@ -4,9 +4,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { LocationOn } from "@mui/icons-material";
+import getRole from "../../utils/getRole";
 
-export default function DataCard({ data }) {
+export default function AccountCard({ data }) {
   return (
     <Card sx={{ display: "flex", justifyContent: "space-between" }}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -14,22 +14,15 @@ export default function DataCard({ data }) {
           <Typography component="div" variant="h6">
             {data.name}
           </Typography>
-          <Typography
-            variant="subtitle4"
-            color="text.secondary"
-            component="div"
-          >
-            {data.description.split(" ").slice(0, 15).join(" ") + "..."}
+          <Typography component="div" variant="subtitle2">
+            {data.email}
           </Typography>
           <Typography
-            variant="subtitle2"
-            color="text.secondary"
             component="div"
-            display="flex"
-            alignItems="center"
+            variant="subtitle4"
+            color="text.secondary"
           >
-            <LocationOn />
-            {data.location.lat + " " + data.location.lng}
+            {getRole(data.role)}
           </Typography>
         </CardContent>
       </Box>
