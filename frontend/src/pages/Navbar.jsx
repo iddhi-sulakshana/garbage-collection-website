@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   AppBar,
   Box,
@@ -12,10 +11,17 @@ import {
   Tooltip,
   MenuItem,
 } from "@mui/material";
-import { Menu as MenuIcon, Adb as AdbIcon } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Menu as MenuIcon } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
+import Logo from "../component/Logo";
+import { useEffect, useRef, useState } from "react";
+import { useAppBarHei, useToken, useUser } from "../hooks/AppContext";
 
-const pages = ["Products", "Pricing", "Blog"];
+const commonPages = [{ name: "Home", path: "/" }];
+const adminPages = [{ name: "Admin", path: "/admin" }];
+const gtfPages = [{ name: "GTF", path: "/gtf" }];
+const csPages = [{ name: "CS", path: "/cs" }];
+const gcPages = [{ name: "GC", path: "/gc" }];
 const settings = [
   { name: "Profile", path: "/profile" },
   { name: "Account", path: "/account" },
@@ -23,9 +29,34 @@ const settings = [
   { name: "Logout", path: "/logout" },
 ];
 
-export default function Navbar({ loggedIn, setLoggedIn }) {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+export default function Navbar() {
+  const navigate = useNavigate();
+  const token = useToken();
+  const { user, error, loading } = useUser();
+  const { setHeight } = useAppBarHei();
+  const appBarRef = useRef(null);
+
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [pages, setPages] = useState([...commonPages]);
+
+  useEffect(() => {
+    setHeight(appBarRef.current.clientHeight);
+    if (!token) return;
+    if (loading) return;
+    if (error) alert("Error Getting User details");
+    if (user) {
+      if (user.role === "admin") {
+        setPages([...commonPages, ...adminPages]);
+      } else if (user.role === "gtf") {
+        setPages([...commonPages, ...gtfPages]);
+      } else if (user.role === "cs") {
+        setPages([...commonPages, ...csPages]);
+      } else if (user.role === "gc") {
+        setPages([...commonPages, ...gcPages]);
+      }
+    }
+  }, [token, loading, error, user, setHeight]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -41,30 +72,11 @@ export default function Navbar({ loggedIn, setLoggedIn }) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
   return (
-    <AppBar position="static">
+    <AppBar position="static" ref={appBarRef}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-            <Typography
-              variant="h6"
-              noWrap
-              sx={{
-                mr: 2,
-                display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              LOGO
-            </Typography>
-          </Link>
-
+          <Logo />
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -95,52 +107,42 @@ export default function Navbar({ loggedIn, setLoggedIn }) {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                  <Link
+                    to={page.path}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <Typography textAlign="center">{page.name}</Typography>
+                  </Link>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
+          <Logo mobile={true} />
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.name}
+                style={{ textDecoration: "none" }}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                <Link
+                  to={page.path}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  {page.name}
+                </Link>
               </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {loggedIn ? (
+            {token ? (
               <>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src="/static/images/avatar/2.jpg"
-                    />
+                    <Avatar alt={user?.name} src={user?.profile} />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -159,11 +161,13 @@ export default function Navbar({ loggedIn, setLoggedIn }) {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
+                  {/* Menu items */}
+                  <Typography textAlign="center">{user?.name}</Typography>
                   {settings.map((setting) => (
                     <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
                       <Link
                         to={setting.path}
-                        style={{ textDecoration: "none" }}
+                        style={{ textDecoration: "none", color: "inherit" }}
                       >
                         <Typography textAlign="center">
                           {setting.name}
@@ -174,13 +178,9 @@ export default function Navbar({ loggedIn, setLoggedIn }) {
                 </Menu>
               </>
             ) : (
-              <Link
-                activestyle={{ color: "red" }}
-                to="/login"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
+              <MenuItem onClick={() => navigate("/login")}>
                 <Typography textAlign="center">Login/Register</Typography>
-              </Link>
+              </MenuItem>
             )}
           </Box>
         </Toolbar>

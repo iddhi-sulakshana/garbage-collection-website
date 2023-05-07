@@ -12,16 +12,24 @@ import {
   createTheme,
 } from "@mui/material";
 import { CheckBox, LockOutlined } from "@mui/icons-material";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useSetToken, useToken } from "../hooks/AppContext";
 
 const theme = createTheme();
 
-export default function Login({ setLoggedIn }) {
+export default function Login() {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const token = useToken();
+  const setToken = useSetToken();
   const navigate = useNavigate();
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
   const handleLogIn = (event) => {
     event.preventDefault();
@@ -48,7 +56,8 @@ export default function Login({ setLoggedIn }) {
     const response = validate(submitData);
 
     if (response.status === 200) {
-      setLoggedIn(true);
+      localStorage.setItem("x-token", "12312313");
+      setToken("12312313");
       navigate("/");
     } else {
       alert("Login failed: " + response.message);
