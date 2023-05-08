@@ -15,9 +15,13 @@ import { LockOutlined } from "@mui/icons-material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import axios from "axios";
+import getURL from "../utils/getURL";
+import { LoadingButton } from "@mui/lab";
 const theme = createTheme();
 export default function Signup() {
   const { enqueueSnackbar } = useSnackbar();
+  const [submitted, setSubmitted] = useState(false);
   const [fNameError, setFNameError] = useState(false);
   const [lNameError, setLNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -27,6 +31,8 @@ export default function Signup() {
 
   const handleSignup = (event) => {
     event.preventDefault();
+    if (submitted) return;
+    setSubmitted(true);
     const data = new FormData(event.currentTarget);
 
     const submitData = {
@@ -77,8 +83,25 @@ export default function Signup() {
         variant: "error",
       });
     }
-
-    if (error) return;
+    if (error) return setSubmitted(false);
+    axios
+      .request({
+        method: "post",
+        maxBodyLength: Infinity,
+        url: getURL(),
+        data: submitData,
+      })
+      .then((response) => {
+        enqueueSnackbar(response.data, { variant: "success" });
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.response?.data || "500 Error Sending Request", {
+          variant: "error",
+        });
+      })
+      .finally(() => {
+        setSubmitted(false);
+      });
   };
 
   return (
@@ -229,14 +252,16 @@ export default function Signup() {
                 />
               </Grid>
             </Grid>
-            <Button
+            <LoadingButton
+              loading={submitted}
+              loadingPosition="start"
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
-            </Button>
+              {submitted ? "Signing up..." : "Sign Up"}
+            </LoadingButton>
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link to="/login" variant="body2">
