@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import useFetchUser from "./useFetchUser";
+import { SnackbarProvider } from "notistack";
 
 const UserContext = createContext(null);
 const TokenContext = createContext(null);
@@ -29,7 +30,14 @@ export function Provider({ children }) {
       <TokenContext.Provider value={token}>
         <SetTokenContext.Provider value={setToken}>
           <AppBarHeiContext.Provider value={{ height, setHeight }}>
-            {children}
+            <SnackbarProvider
+              maxSnack={3}
+              autoHideDuration={3000}
+              preventDuplicate
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              {children}
+            </SnackbarProvider>
           </AppBarHeiContext.Provider>
         </SetTokenContext.Provider>
       </TokenContext.Provider>

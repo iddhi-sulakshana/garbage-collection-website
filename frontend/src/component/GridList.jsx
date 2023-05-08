@@ -45,7 +45,7 @@ export default function GridList({ data, setClicked, title, type }) {
               <Item elevation={3} key={index}>
                 <CardActionArea
                   onClick={() => {
-                    if (type === "location" || type === "incidents") {
+                    if (type === "location" || type === "reports") {
                       setTimeout(() => {
                         setClicked(index + 1);
                       });
@@ -62,7 +62,7 @@ export default function GridList({ data, setClicked, title, type }) {
                     <AccountCard data={item} />
                   ) : type === "articles" ? (
                     <ArticleCard data={item} />
-                  ) : type === "incidents" ? (
+                  ) : type === "incidents" || type === "reports" ? (
                     <IncidentCard data={item} />
                   ) : null}
                 </CardActionArea>
