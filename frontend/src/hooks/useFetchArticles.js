@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function useFetchArticles(token, refresh) {
+export default function useFetchArticles(refresh) {
   const [articles, setArticles] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -8,14 +8,8 @@ export default function useFetchArticles(token, refresh) {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    if (!token) {
-      setArticles(null);
-      setError("No token provided");
-      setLoading(false);
-      return;
-    }
     fetchArticles();
-  }, [token, refresh]);
+  }, [refresh]);
   async function fetchArticles() {
     try {
       setTimeout(() => {
@@ -23,19 +17,22 @@ export default function useFetchArticles(token, refresh) {
           {
             id: 1,
             title: "First Article",
-            description: "First Article Description",
+            description:
+              "loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem ",
             picture: "https://picsum.photos/500/200",
           },
           {
             id: 2,
             title: "Second Article",
-            description: "Second Article Description",
+            description:
+              "loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem ",
             picture: "https://picsum.photos/500/200",
           },
           {
             id: 3,
             title: "Third Article",
-            description: "Third Article Description",
+            description:
+              "loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem ",
             picture: "https://picsum.photos/500/200",
           },
         ]);
