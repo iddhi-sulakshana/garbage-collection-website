@@ -60,12 +60,12 @@ export default function ArticleForm({ clicked }) {
             height: "25vh",
           }}
           src={clicked?.picture}
-          alt="Profile Picture"
+          alt="Article Picture"
         />
       ) : (
         <Avatar
           sx={{ m: 1, height: 125, width: 125, bgcolor: "primary.main" }}
-          alt="Profile Picture"
+          alt="Article Picture"
         />
       )}
 
@@ -112,6 +112,17 @@ export default function ArticleForm({ clicked }) {
         >
           {clicked ? "Update" : "Create"}
         </Button>
+        {clicked ? (
+          <Button
+            type="submit"
+            fullWidth
+            color="error"
+            variant="contained"
+            sx={{ mt: 1, mb: 2 }}
+          >
+            Delete
+          </Button>
+        ) : null}
       </Box>
     </Box>
   );

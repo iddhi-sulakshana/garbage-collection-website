@@ -60,6 +60,7 @@ export default function Collecting() {
         sx={{
           width: { xs: "100%", md: "70vW" },
           height: { xs: "50%", md: "100%" },
+          overflowY: "scroll",
         }}
       >
         <CollectingForm clicked={clicked} />

@@ -1,82 +1,91 @@
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Grid,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
+import { useAppBarHei } from "../hooks/AppContext";
 import useFetchArticles from "../hooks/useFetchArticles";
-import { useAppBarHei, useToken } from "../hooks/AppContext";
-import { Box, Fab } from "@mui/material";
 import Loader, { LoaderError } from "../component/Loader";
-import { Add, Refresh } from "@mui/icons-material";
-import GridList from "../component/GridList";
-import ArticleForm from "../component/Forms/Article";
+import ArticleDialog from "../component/ArticleDialog";
 export default function Articles() {
-  const token = useToken();
   const { height } = useAppBarHei();
-  const [clicked, setClicked] = useState(null);
-  const [refresh, setRefresh] = useState(0);
-  const { articles, error, loading } = useFetchArticles(token, refresh);
+  const { articles, loading, error } = useFetchArticles();
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState(null);
+
+  const handleClose = () => {
+    setOpen(false);
+    setData(null);
+  };
   return (
     <Box
       sx={{
-        position: "relative",
-        display: { xs: "block", md: "flex" },
         width: "100%",
+        pt: 1,
         height: {
           xs: `calc(100vh - ${height}px)`,
           md: `calc(100vh - ${height}px)`,
         },
       }}
     >
-      <Box
-        sx={{
-          width: { xs: "100%", md: "30vW" },
-          height: { xs: "50%", md: "100%" },
-          overflowY: "scroll",
-          position: "relative",
-          p: 2,
-        }}
-      >
-        {loading ? (
-          <Loader />
-        ) : error ? (
-          <LoaderError error={error} />
-        ) : (
-          <>
-            <Fab
-              sx={{ position: "absolute", top: { xs: 10, md: 10 }, right: 15 }}
-              color="primary"
-              size="small"
-              aria-label="add"
-              onClick={() => setClicked(null)}
-            >
-              <Add />
-            </Fab>
-            <GridList
-              title="Articles"
-              type="articles"
-              data={articles}
-              setClicked={setClicked}
-            />
-          </>
-        )}
-      </Box>
-      <Box
-        sx={{
-          width: { xs: "100%", md: "70vW" },
-          height: { xs: "50%", md: "100%" },
-        }}
-      >
-        <ArticleForm clicked={clicked} />
-      </Box>
-      <Fab
-        sx={{ position: "absolute", top: { xs: 350, md: 15 }, right: 10 }}
-        color="primary"
-        size="small"
-        aria-label="refresh"
-        onClick={() => {
-          setClicked(null);
-          setRefresh(refresh + 1);
-        }}
-      >
-        <Refresh />
-      </Fab>
+      <Typography textAlign="center" variant="h4" sx={{ mb: 2 }}>
+        Articles
+      </Typography>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <LoaderError error={error} />
+      ) : (
+        <Grid container spacing={4} p={5} pt={3}>
+          {articles.map((article, index) => (
+            <Grid item key={index} xs={12} sm={6} md={4}>
+              <Card
+                elevation={5}
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height={250}
+                  image={article.picture}
+                  alt="random"
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {article.title}
+                  </Typography>
+                  <Typography>
+                    {article.description.split(" ").slice(0, 15).join(" ") +
+                      "..."}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={() => {
+                      setData(article);
+                      setOpen(true);
+                    }}
+                  >
+                    Read More
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+      <ArticleDialog open={open} data={data} handleClose={handleClose} />
     </Box>
   );
 }

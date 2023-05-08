@@ -15,15 +15,15 @@ const center = {
   lat: 6.9271,
   lng: 79.8612,
 };
-export default function CollectingForm({ clicked }) {
+export default function IncidentForm({ clicked }) {
   // to change values in form
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [lng, setLng] = useState("");
   const [lat, setLat] = useState("");
 
   useEffect(() => {
-    setName(clicked?.name || "");
+    setTitle(clicked?.title || "");
     setDescription(clicked?.description || "");
     setLat(clicked?.location.lat || center.lat);
     setLng(clicked?.location.lng || center.lng);
@@ -68,7 +68,7 @@ export default function CollectingForm({ clicked }) {
       }}
     >
       <Typography variant="h4" component="div">
-        {!clicked && "Add"} Collecting Place
+        {clicked ? "Update" : "Report"} Incident
       </Typography>
       {clicked ? (
         <Box
@@ -97,15 +97,15 @@ export default function CollectingForm({ clicked }) {
           <Grid item xs={12} sm={6}>
             <TextField
               onChange={(e) => {
-                setName(e.target.value);
+                setTitle(e.target.value);
               }}
-              value={name}
+              value={title}
               required
               fullWidth
-              name="name"
-              label="Name"
+              name="title"
+              label="Title"
               type="text"
-              id="name"
+              id="title"
             />
           </Grid>
           <Grid container item xs={12} sm={6} spacing={2}>

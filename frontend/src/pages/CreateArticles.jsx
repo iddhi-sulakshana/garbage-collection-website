@@ -1,18 +1,17 @@
-import { Box, Fab } from "@mui/material";
 import React, { useState } from "react";
+import useFetchArticles from "../hooks/useFetchArticles";
 import { useAppBarHei, useToken } from "../hooks/AppContext";
-import GridList from "../component/GridList";
-import useFetchAccounts from "../hooks/useFetchAccounts";
+import { Box, Fab } from "@mui/material";
 import Loader, { LoaderError } from "../component/Loader";
 import { Add, Refresh } from "@mui/icons-material";
-import AccountForm from "../component/Forms/Account";
-
-export default function Accounts() {
-  const { height } = useAppBarHei();
+import GridList from "../component/GridList";
+import ArticleForm from "../component/Forms/Article";
+export default function CreateArticles() {
   const token = useToken();
+  const { height } = useAppBarHei();
   const [clicked, setClicked] = useState(null);
   const [refresh, setRefresh] = useState(0);
-  const { accounts, loading, error } = useFetchAccounts(token, refresh);
+  const { articles, error, loading } = useFetchArticles(token, refresh);
   return (
     <Box
       sx={{
@@ -50,9 +49,9 @@ export default function Accounts() {
               <Add />
             </Fab>
             <GridList
-              title="Accounts"
-              type="accounts"
-              data={accounts}
+              title="Articles"
+              type="articles"
+              data={articles}
               setClicked={setClicked}
             />
           </>
@@ -65,7 +64,7 @@ export default function Accounts() {
           overflowY: "scroll",
         }}
       >
-        <AccountForm clicked={clicked} />
+        <ArticleForm clicked={clicked} />
       </Box>
       <Fab
         sx={{ position: "absolute", top: { xs: 350, md: 15 }, right: 10 }}

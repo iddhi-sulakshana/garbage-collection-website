@@ -1,18 +1,17 @@
-import { Box, Fab } from "@mui/material";
 import React, { useState } from "react";
-import { useAppBarHei, useToken } from "../hooks/AppContext";
-import GridList from "../component/GridList";
-import useFetchAccounts from "../hooks/useFetchAccounts";
+import { useAppBarHei } from "../hooks/AppContext";
+import { Box, Fab } from "@mui/material";
 import Loader, { LoaderError } from "../component/Loader";
 import { Add, Refresh } from "@mui/icons-material";
-import AccountForm from "../component/Forms/Account";
+import GridList from "../component/GridList";
+import useFetchIncidents from "../hooks/useFetchIncidents";
+import IncidentForm from "../component/Forms/Incident";
 
-export default function Accounts() {
+export default function ReportIncidents() {
   const { height } = useAppBarHei();
-  const token = useToken();
   const [clicked, setClicked] = useState(null);
   const [refresh, setRefresh] = useState(0);
-  const { accounts, loading, error } = useFetchAccounts(token, refresh);
+  const { incidents, error, loading } = useFetchIncidents(refresh);
   return (
     <Box
       sx={{
@@ -50,9 +49,9 @@ export default function Accounts() {
               <Add />
             </Fab>
             <GridList
-              title="Accounts"
-              type="accounts"
-              data={accounts}
+              title="Reported Incidents"
+              type="incidents"
+              data={incidents}
               setClicked={setClicked}
             />
           </>
@@ -65,7 +64,7 @@ export default function Accounts() {
           overflowY: "scroll",
         }}
       >
-        <AccountForm clicked={clicked} />
+        <IncidentForm clicked={clicked} />
       </Box>
       <Fab
         sx={{ position: "absolute", top: { xs: 350, md: 15 }, right: 10 }}

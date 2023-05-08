@@ -25,7 +25,7 @@ export default function useFetchUser(token) {
           email: "John.Doe@gmail.com",
           age: 25,
           address: "1234 Main St",
-          role: "admin",
+          role: "cs",
           picture:
             "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg",
         });

@@ -12,6 +12,7 @@ import React from "react";
 import LocationCard from "./Cards/LocationCard";
 import AccountCard from "./Cards/AccountCard";
 import ArticleCard from "./Cards/ArticleCard";
+import IncidentCard from "./Cards/IncidentCard";
 
 const theme = new createTheme();
 const Item = styled(Paper)(({ theme }) => ({
@@ -44,7 +45,7 @@ export default function GridList({ data, setClicked, title, type }) {
               <Item elevation={3} key={index}>
                 <CardActionArea
                   onClick={() => {
-                    if (type === "location") {
+                    if (type === "location" || type === "incidents") {
                       setTimeout(() => {
                         setClicked(index + 1);
                       });
@@ -61,6 +62,8 @@ export default function GridList({ data, setClicked, title, type }) {
                     <AccountCard data={item} />
                   ) : type === "articles" ? (
                     <ArticleCard data={item} />
+                  ) : type === "incidents" ? (
+                    <IncidentCard data={item} />
                   ) : null}
                 </CardActionArea>
               </Item>
