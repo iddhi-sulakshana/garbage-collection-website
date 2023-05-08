@@ -10,6 +10,11 @@ import {
 import React, { useEffect, useState } from "react";
 import SelectMap from "../SelectMap";
 
+// coordinates for colombo
+const center = {
+  lat: 6.9271,
+  lng: 79.8612,
+};
 export default function CollectingForm({ clicked }) {
   // to change values in form
   const [name, setName] = useState("");
@@ -20,8 +25,8 @@ export default function CollectingForm({ clicked }) {
   useEffect(() => {
     setName(clicked?.name || "");
     setDescription(clicked?.description || "");
-    setLat(clicked?.location.lat || "");
-    setLng(clicked?.location.lng || "");
+    setLat(clicked?.location.lat || center.lat);
+    setLng(clicked?.location.lng || center.lng);
   }, [clicked]);
 
   const handleLogIn = (event) => {
@@ -63,7 +68,7 @@ export default function CollectingForm({ clicked }) {
       }}
     >
       <Typography variant="h4" component="div">
-        {!clicked && "Add"} Article
+        {!clicked && "Add"} Collecting Place
       </Typography>
       {clicked ? (
         <Box
@@ -73,12 +78,12 @@ export default function CollectingForm({ clicked }) {
             height: "25vh",
           }}
           src={clicked?.picture}
-          alt="Profile Picture"
+          alt="Collecting Picture"
         />
       ) : (
         <Avatar
           sx={{ m: 1, height: 125, width: 125, bgcolor: "primary.main" }}
-          alt="Profile Picture"
+          alt="Collecting Picture"
         />
       )}
 
@@ -177,6 +182,17 @@ export default function CollectingForm({ clicked }) {
         >
           {clicked ? "Update" : "Create"}
         </Button>
+        {clicked ? (
+          <Button
+            type="submit"
+            fullWidth
+            color="error"
+            variant="contained"
+            sx={{ mt: 1, mb: 2 }}
+          >
+            Delete
+          </Button>
+        ) : null}
       </Box>
     </Box>
   );

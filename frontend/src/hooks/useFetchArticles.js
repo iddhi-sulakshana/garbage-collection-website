@@ -25,33 +25,18 @@ export default function useFetchArticles(token, refresh) {
             title: "First Article",
             description: "First Article Description",
             picture: "https://picsum.photos/500/200",
-            pictures: [
-              "https://picsum.photos/500/200",
-              "https://picsum.photos/500/200",
-              "https://picsum.photos/500/200",
-            ],
           },
           {
             id: 2,
             title: "Second Article",
             description: "Second Article Description",
             picture: "https://picsum.photos/500/200",
-            pictures: [
-              "https://picsum.photos/500/200",
-              "https://picsum.photos/500/200",
-              "https://picsum.photos/500/200",
-            ],
           },
           {
             id: 3,
             title: "Third Article",
             description: "Third Article Description",
             picture: "https://picsum.photos/500/200",
-            pictures: [
-              "https://picsum.photos/500/200",
-              "https://picsum.photos/500/200",
-              "https://picsum.photos/500/200",
-            ],
           },
         ]);
         setLoading(false);
