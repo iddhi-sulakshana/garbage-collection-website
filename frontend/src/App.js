@@ -13,6 +13,9 @@ import Accounts from "./pages/Accounts";
 import CreateArticles from "./pages/CreateArticles";
 import Collecting from "./pages/Collecting";
 import Articles from "./pages/Articles";
+import ReportIncidents from "./pages/ReportIncidents";
+import Reports from "./pages/Reports";
+import HandleReports from "./pages/HandleReports";
 export default function App() {
   const setToken = useSetToken();
   const token = localStorage.getItem("x-token");
@@ -35,6 +38,9 @@ export default function App() {
         <Route path="/articles" element={<Articles />} />
         <Route path="/create-articles" element={<CreateArticles />} />
         <Route path="/create-collecting" element={<Collecting />} />
+        <Route path="/report-incidents" element={<ReportIncidents />} />
+        <Route path="/handle-reports" element={<HandleReports />} />
+        <Route path="/reports" element={<Reports />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </>

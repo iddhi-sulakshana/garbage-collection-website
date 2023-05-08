@@ -27,9 +27,9 @@ const adminPages = [
   { name: "Create Articles", path: "/create-articles" },
   { name: "Collecting Places", path: "/create-collecting" },
 ];
-const gtfPages = [{ name: "GTF", path: "/gtf" }];
-const csPages = [{ name: "CS", path: "/cs" }];
-const gcPages = [{ name: "GC", path: "/gc" }];
+const gtfPages = [{ name: "Report Incidents", path: "/report-incidents" }];
+const csPages = [{ name: "Reports", path: "/reports" }];
+const gcPages = [{ name: "Reports", path: "/handle-reports" }];
 const settings = [
   { name: "Profile", path: "/profile" },
   { name: "Logout", path: "/logout" },
