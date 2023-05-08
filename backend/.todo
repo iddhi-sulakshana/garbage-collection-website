@@ -1,0 +1,32 @@
+// all users
+-get user details
+-autheticate users / login
+-signup
+-get articles
+-get collection places
+-change password
+
+// gtf members only
+-get own incidents
+-post incident
+-update incident
+-delete incident
+
+// gc members only
+-get pending incidents
+-accept incident
+-reject incident
+
+// cs members only
+-get accepted incidents
+-mark as completed
+
+// admin only
+-create users
+-update users
+-create articles
+-update articles
+-delete articles
+-add collection place
+-update collection place
+-delete collection place

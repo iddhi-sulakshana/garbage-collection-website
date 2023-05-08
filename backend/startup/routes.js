@@ -3,6 +3,9 @@ const morgan = require("morgan");
 const cors = require("cors");
 const users = require("../routes/users");
 const auth = require("../routes/auth");
+const articles = require("../routes/articles");
+const collectings = require("../routes/collectings");
+const incidents = require("../routes/incidents");
 
 // middlewares
 const error = require("../middlewares/error");
@@ -35,6 +38,9 @@ module.exports = function (app) {
   // assign route paths
   app.use("/users", users);
   app.use("/auth", auth);
+  app.use("/articles", articles);
+  app.use("/collectings", collectings);
+  app.use("/incidents", incidents);
 
   app.use(error);
 };

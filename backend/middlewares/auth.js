@@ -10,6 +10,8 @@ async function auth(req, res, next) {
   const exist = await User.findById(result._id);
   if (!exist) return res.status(400).send("Invalid User Token");
 
+  result.role = exist.role;
+
   req.user = result;
   next();
 }

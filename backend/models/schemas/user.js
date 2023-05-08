@@ -35,7 +35,7 @@ module.exports = new Schema({
     minlength: 5,
     maxlength: 1024,
     required: true,
-    default: "profilePic/default.png",
+    default: "profile/default.png",
   },
   role: {
     type: String,
