@@ -17,14 +17,14 @@ export default function AccountForm({ clicked }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [age, setAge] = useState(0);
+  const [phone, setPhone] = useState(0);
   const [address, setAddress] = useState("");
   const [role, setRole] = useState("");
 
   useEffect(() => {
     setName(clicked?.name || "");
     setEmail(clicked?.email || "");
-    setAge(clicked?.age || 0);
+    setPhone(clicked?.phone || 0);
     setAddress(clicked?.address || "");
     setRole(clicked?.role || "");
   }, [clicked]);
@@ -114,19 +114,18 @@ export default function AccountForm({ clicked }) {
               autoFocus
             />
           </Grid>
-          {/* age number field */}
+          {/* phone number field */}
           <Grid item xs={12} sm={6}>
             <TextField
               onChange={(e) => {
-                setAge(e.target.value);
+                setPhone(e.target.value);
               }}
-              value={age}
+              value={phone}
               required
               fullWidth
-              name="age"
-              label="Age"
-              type="number"
-              id="age"
+              name="phone"
+              label="Phone"
+              id="phone"
             />
           </Grid>
           {/* password text field */}

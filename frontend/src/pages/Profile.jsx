@@ -62,7 +62,7 @@ export default function Profile() {
                 {user?.address}
               </Typography>
               <Typography component="div" variant="subtitle1">
-                {user?.age} years old
+                {user?.phone}
               </Typography>
               <Box
                 component="form"

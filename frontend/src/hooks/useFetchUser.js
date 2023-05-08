@@ -23,7 +23,7 @@ export default function useFetchUser(token) {
           id: "1",
           name: "John Doe",
           email: "John.Doe@gmail.com",
-          age: 25,
+          phone: "0123456789",
           address: "1234 Main St",
           role: "cs",
           picture:
