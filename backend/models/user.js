@@ -22,7 +22,7 @@ function validate(user) {
       .max(20)
       .required()
       .valid("admin", "gtf", "gc", "cs"),
-    password: Joi.string().min(5).max(1024).required(),
+    password: Joi.string().min(5).max(1024),
   });
   const result = schema.validate(user);
   if (result.error) return result.error.details[0].message;

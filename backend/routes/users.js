@@ -3,6 +3,8 @@ const { User, validateUser } = require("../models/user");
 const { encrypt } = require("../utils/hash");
 const { auth } = require("../middlewares/auth");
 const { isValidObjectId } = require("mongoose");
+const fs = require("fs");
+const saveImage = require("../utils/saveImage");
 const router = express.Router();
 
 // get all the gc and cs users not equal to gtf or admin
@@ -69,6 +71,41 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+// update user
+router.put("/", auth, async (req, res) => {
+  req.body.role = req.user.role;
+  const errorMsg = validateUser(req.body);
+  if (errorMsg) return res.status(400).send(errorMsg);
+
+  const picture = req.files?.picture;
+  console.log(picture);
+  if (picture && !/image/.test(picture.mimetype))
+    return res.status(400).send("Invalid image file");
+
+  const exist = await User.findOne({ email: req.body.email });
+  if (exist && exist._id != req.user._id)
+    return res.status(400).send("User already registered with same email");
+
+  if (req.body.password) delete req.body.password;
+  const user = await User.findByIdAndUpdate(req.user._id, req.body);
+  if (!user) return res.status(404).send("User not found");
+
+  if (picture) {
+    if (user.picture !== "profile/default.png")
+      fs.unlink(user.picture, (err) => {
+        if (err && err.code !== "ENOENT") return res.status(500).send(err);
+      });
+    user.picture = await saveImage(picture, `profile/${user._id}`);
+    try {
+      await user.save();
+    } catch (ex) {
+      return res.status(400).send(ex.message);
+    }
+  }
+
+  return res.send("Successfully updated user");
+});
+
 // update users admin
 router.put("/admin/:id", auth, async (req, res) => {
   if (isValidObjectId(req.params.id) === false)
@@ -84,6 +121,7 @@ router.put("/admin/:id", auth, async (req, res) => {
   const exist = await User.findOne({ email: req.body.email });
   if (exist && exist._id != req.params.id)
     return res.status(400).send("User already registered with same email");
+  req.body.password = await encrypt(req.body.password);
 
   const user = await User.findByIdAndUpdate(req.params.id, req.body);
   if (!user) return res.status(404).send("User not found");

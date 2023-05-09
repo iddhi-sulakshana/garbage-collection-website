@@ -6,6 +6,7 @@ const UserContext = createContext(null);
 const TokenContext = createContext(null);
 const SetTokenContext = createContext(null);
 const AppBarHeiContext = createContext(null);
+const SetRefreshContext = createContext(null);
 
 export function useUser() {
   return useContext(UserContext);
@@ -19,10 +20,14 @@ export function useSetToken() {
 export function useAppBarHei() {
   return useContext(AppBarHeiContext);
 }
+export function useSetRefresh() {
+  return useContext(SetRefreshContext);
+}
 
 export function Provider({ children }) {
   const [token, setToken] = useState(null);
-  const userData = useFetchUser(token);
+  const [refresh, setRefresh] = useState(0);
+  const userData = useFetchUser(token, refresh);
   const [height, setHeight] = useState(0);
 
   return (
@@ -36,7 +41,9 @@ export function Provider({ children }) {
               preventDuplicate
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
             >
-              {children}
+              <SetRefreshContext.Provider value={setRefresh}>
+                {children}
+              </SetRefreshContext.Provider>
             </SnackbarProvider>
           </AppBarHeiContext.Provider>
         </SetTokenContext.Provider>

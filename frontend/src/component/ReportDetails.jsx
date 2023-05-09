@@ -1,7 +1,6 @@
-import { Close, Flag, LocationOn } from "@mui/icons-material";
+import { Check, Clear, Close, Flag, LocationOn } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Fab,
   Grid,
   TextField,
@@ -9,13 +8,23 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import getURL from "../utils/getURL";
+import { useToken } from "../hooks/AppContext";
+import { useSnackbar } from "notistack";
+import axios from "axios";
+import { LoadingButton } from "@mui/lab";
+
 export default function ReportDetails({
   location,
   setClicked,
   setRefresh,
   refresh,
 }) {
-  const [selected, setSelected] = useState(false);
+  const token = useToken();
+  const { enqueueSnackbar } = useSnackbar();
+  const [submitted, setSubmitted] = useState(false);
+  const [comment, setComment] = useState("");
+  const [flag, setFlag] = useState(false);
   return (
     <Box sx={{ p: { xs: 0, md: 3 }, position: "relative" }} textAlign="center">
       <Box
@@ -26,7 +35,7 @@ export default function ReportDetails({
           objectFit: { xs: "fit", md: "cover" },
         }}
         alt={location?.title}
-        src={location?.picture}
+        src={getURL(location?.picture)}
       />
 
       <Typography component="div" variant="h5" sx={{ pt: 1 }}>
@@ -53,7 +62,15 @@ export default function ReportDetails({
         {location?.location.lat + " " + location?.location.lng}
       </Typography>
       <Box component="form" onSubmit={handleAccept} noValidate sx={{ mt: 1 }}>
-        <TextField fullWidth label="Comment" variant="standard" />
+        <TextField
+          fullWidth
+          label="Comment"
+          variant="standard"
+          value={comment}
+          onChange={(e) => {
+            setComment(e.target.value);
+          }}
+        />
         <Grid container spacing={2} mt={1}>
           <Grid item xs={6}>
             <Typography component="div" variant="subtitle1" sx={{ pt: 1 }}>
@@ -64,9 +81,9 @@ export default function ReportDetails({
             <ToggleButton
               value="check"
               color="error"
-              selected={selected}
+              selected={flag}
               onChange={() => {
-                setSelected(!selected);
+                setFlag(!flag);
               }}
             >
               <Flag />
@@ -74,26 +91,30 @@ export default function ReportDetails({
           </Grid>
 
           <Grid item xs={6}>
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{ mt: 1 }}
-              color="error"
+            <LoadingButton
+              loading={submitted}
+              loadingPosition="start"
+              startIcon={<Clear />}
               onClick={handleReject}
+              fullWidth
+              color="error"
+              variant="contained"
             >
               Reject
-            </Button>
+            </LoadingButton>
           </Grid>
           <Grid item xs={6}>
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{ mt: 1 }}
+            <LoadingButton
+              loading={submitted}
+              loadingPosition="start"
+              startIcon={<Check />}
               type="submit"
+              fullWidth
               color="success"
+              variant="contained"
             >
               Accept
-            </Button>
+            </LoadingButton>
           </Grid>
         </Grid>
       </Box>
@@ -115,13 +136,56 @@ export default function ReportDetails({
   );
   function handleAccept(e) {
     e.preventDefault();
-    console.log("handle accept" + location.id);
-    setClicked(null);
-    setRefresh(refresh + 1);
+    setSubmitted(true);
+    if (!comment || comment.length < 5) {
+      enqueueSnackbar("Please enter a comment", { variant: "error" });
+      return;
+    }
+    axios
+      .request({
+        method: "PATCH",
+        url: getURL("incidents/accept/" + location._id),
+        headers: {
+          "x-auth-token": token,
+        },
+        data: {
+          flag,
+        },
+      })
+      .then((res) => {
+        enqueueSnackbar(res.data, { variant: "success" });
+
+        setClicked(null);
+        setRefresh(refresh + 1);
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.response?.data, { variant: "error" });
+      })
+      .finally(() => {
+        setSubmitted(false);
+      });
   }
   function handleReject() {
-    console.log("handle reject" + location.id);
-    setClicked(null);
-    setRefresh(refresh + 1);
+    setSubmitted(true);
+    axios
+      .request({
+        method: "PATCH",
+        url: getURL("incidents/reject/" + location._id),
+        headers: {
+          "x-auth-token": token,
+        },
+      })
+      .then((res) => {
+        enqueueSnackbar(res.data, { variant: "success" });
+
+        setClicked(null);
+        setRefresh(refresh + 1);
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.response?.data, { variant: "error" });
+      })
+      .finally(() => {
+        setSubmitted(false);
+      });
   }
 }

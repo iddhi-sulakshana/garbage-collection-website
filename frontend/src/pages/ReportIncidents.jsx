@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAppBarHei } from "../hooks/AppContext";
+import { useAppBarHei, useToken } from "../hooks/AppContext";
 import { Box, Fab } from "@mui/material";
 import Loader, { LoaderError } from "../component/Loader";
 import { Add, Refresh } from "@mui/icons-material";
@@ -8,10 +8,11 @@ import useFetchIncidents from "../hooks/useFetchIncidents";
 import IncidentForm from "../component/Forms/Incident";
 
 export default function ReportIncidents() {
+  const token = useToken();
   const { height } = useAppBarHei();
   const [clicked, setClicked] = useState(null);
   const [refresh, setRefresh] = useState(0);
-  const { incidents, error, loading } = useFetchIncidents(refresh);
+  const { incidents, error, loading } = useFetchIncidents(token, refresh);
   return (
     <Box
       sx={{
@@ -64,7 +65,11 @@ export default function ReportIncidents() {
           overflowY: "scroll",
         }}
       >
-        <IncidentForm clicked={clicked} />
+        <IncidentForm
+          clicked={clicked}
+          setClicked={setClicked}
+          setRefresh={setRefresh}
+        />
       </Box>
       <Fab
         sx={{ position: "absolute", top: { xs: 350, md: 15 }, right: 10 }}

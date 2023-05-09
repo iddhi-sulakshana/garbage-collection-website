@@ -1,7 +1,15 @@
-import { Close, LocationOn } from "@mui/icons-material";
-import { Box, Button, Fab, Typography } from "@mui/material";
-import React from "react";
-export default function IncidentDetails({ location, setClicked }) {
+import { Check, Close, LocationOn } from "@mui/icons-material";
+import { Box, Fab, Typography } from "@mui/material";
+import React, { useState } from "react";
+import getURL from "../utils/getURL";
+import { LoadingButton } from "@mui/lab";
+import { useToken } from "../hooks/AppContext";
+import axios from "axios";
+import { enqueueSnackbar } from "notistack";
+export default function IncidentDetails({ location, setClicked, setRefresh }) {
+  const token = useToken();
+  const [submitted, setSubmitted] = useState(false);
+
   return (
     <Box sx={{ p: { xs: 0, md: 3 }, position: "relative" }} textAlign="center">
       <Box
@@ -12,7 +20,7 @@ export default function IncidentDetails({ location, setClicked }) {
           objectFit: { xs: "fit", md: "cover" },
         }}
         alt={location?.title}
-        src={location?.picture}
+        src={getURL(location?.picture)}
       />
 
       <Typography component="div" variant="h5" sx={{ pt: 1 }}>
@@ -38,15 +46,18 @@ export default function IncidentDetails({ location, setClicked }) {
         <LocationOn />
         {location?.location.lat + " " + location?.location.lng}
       </Typography>
-      <Button
-        variant="contained"
-        fullWidth
-        sx={{ mt: 1 }}
+      <LoadingButton
+        loading={submitted}
+        loadingPosition="start"
+        startIcon={<Check />}
         onClick={markAsCompleted}
+        fullWidth
+        sx={{ mt: { xs: 1, md: 2 } }}
         color="success"
+        variant="contained"
       >
         Mark as Completed
-      </Button>
+      </LoadingButton>
       <Fab
         sx={{ position: "absolute", top: { xs: 0, md: 0 }, right: 0 }}
         color="primary"
@@ -63,6 +74,25 @@ export default function IncidentDetails({ location, setClicked }) {
     </Box>
   );
   function markAsCompleted() {
-    console.log("Marked as completed" + location.id);
+    setSubmitted(true);
+    axios
+      .request({
+        method: "PATCH",
+        url: getURL("incidents/complete/" + location._id),
+        headers: {
+          "x-auth-token": token,
+        },
+      })
+      .then((res) => {
+        enqueueSnackbar(res.data, { variant: "success" });
+        setClicked(null);
+        setRefresh((prev) => prev + 2);
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.response?.data, { variant: "error" });
+      })
+      .finally(() => {
+        setSubmitted(false);
+      });
   }
 }

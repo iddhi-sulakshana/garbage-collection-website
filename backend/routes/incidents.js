@@ -27,9 +27,9 @@ router.get("/pending", auth, async (req, res) => {
 // get accepted incidents
 router.get("/accepted", auth, async (req, res) => {
   if (req.user.role !== "cs") return res.status(403).send("Access denied");
-  const incidents = await Incident.find({ status: "accepted" }).select(
-    "-__v -user"
-  );
+  const incidents = await Incident.find({ status: "accepted" })
+    .select("-__v -user")
+    .sort("-flag");
   return res.send(incidents);
 });
 
@@ -46,7 +46,7 @@ router.patch("/accept/:id", auth, async (req, res) => {
   );
   if (!incident) return res.status(404).send("Incident not found");
 
-  return res.send(incident);
+  return res.send("Incident accepted");
 });
 
 // patch incident reject
@@ -62,7 +62,7 @@ router.patch("/reject/:id", auth, async (req, res) => {
   );
   if (!incident) return res.status(404).send("Incident not found");
 
-  return res.send(incident);
+  return res.send("Incident rejected");
 });
 
 // patch incident complete
@@ -78,7 +78,7 @@ router.patch("/complete/:id", auth, async (req, res) => {
   );
   if (!incident) return res.status(404).send("Incident not found");
 
-  return res.send(incident);
+  return res.send("Incident completed");
 });
 
 // create incident
@@ -105,7 +105,7 @@ router.post("/", auth, async (req, res) => {
 
   try {
     await incident.save();
-    return res.send(incident);
+    return res.send("incident created successfully");
   } catch (ex) {
     return res.status(400).send(ex.message);
   }
@@ -149,7 +149,7 @@ router.put("/:id", auth, async (req, res) => {
 
   try {
     await incident.save();
-    return res.send(incident);
+    return res.send("incident updated");
   } catch (ex) {
     return res.status(400).send(ex.message);
   }
