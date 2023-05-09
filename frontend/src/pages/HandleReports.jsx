@@ -50,7 +50,7 @@ export default function HandleReports() {
             title="Reports"
             data={pendings}
             setClicked={setClicked}
-            type={"incidents"}
+            type={"reports"}
           />
         )}
       </Box>

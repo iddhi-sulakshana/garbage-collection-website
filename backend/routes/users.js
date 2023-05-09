@@ -5,6 +5,17 @@ const { auth } = require("../middlewares/auth");
 const { isValidObjectId } = require("mongoose");
 const router = express.Router();
 
+// get all the gc and cs users not equal to gtf or admin
+router.get("/admin", auth, async (req, res) => {
+  if (req.user.role !== "admin") return res.send(403).send("Not allowed");
+
+  const users = await User.find({
+    role: { $nin: ["gtf", "admin"] },
+  }).select("-__v -password");
+
+  return res.send(users);
+});
+
 // get user
 router.get("/me", auth, async (req, res) => {
   const user = await User.findById(req.user._id).select("-__v -password");
@@ -38,7 +49,7 @@ router.post("/admin", auth, async (req, res) => {
 });
 
 // create gtf user
-router.post("/", async (req, res) => {
+router.post("/signup", async (req, res) => {
   req.body.role = "gtf";
 
   const errorMsg = validateUser(req.body);

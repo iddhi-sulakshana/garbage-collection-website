@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import useFetchArticles from "../hooks/useFetchArticles";
-import { useAppBarHei, useToken } from "../hooks/AppContext";
+import { useAppBarHei } from "../hooks/AppContext";
 import { Box, Fab } from "@mui/material";
 import Loader, { LoaderError } from "../component/Loader";
 import { Add, Refresh } from "@mui/icons-material";
 import GridList from "../component/GridList";
 import ArticleForm from "../component/Forms/Article";
 export default function CreateArticles() {
-  const token = useToken();
   const { height } = useAppBarHei();
   const [clicked, setClicked] = useState(null);
   const [refresh, setRefresh] = useState(0);
-  const { articles, error, loading } = useFetchArticles(token, refresh);
+  const { articles, error, loading } = useFetchArticles(refresh);
   return (
     <Box
       sx={{
@@ -64,7 +63,11 @@ export default function CreateArticles() {
           overflowY: "scroll",
         }}
       >
-        <ArticleForm clicked={clicked} />
+        <ArticleForm
+          clicked={clicked}
+          setClicked={setClicked}
+          setRefresh={setRefresh}
+        />
       </Box>
       <Fab
         sx={{ position: "absolute", top: { xs: 350, md: 15 }, right: 10 }}

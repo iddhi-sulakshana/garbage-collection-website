@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Button,
   FormControl,
   Grid,
   InputLabel,
@@ -11,8 +10,16 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import getURL from "../../utils/getURL";
+import { LoadingButton } from "@mui/lab";
+import { Save } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
+import axios from "axios";
+import { useToken } from "../../hooks/AppContext";
 
-export default function AccountForm({ clicked }) {
+export default function AccountForm({ clicked, setClicked, setRefresh }) {
+  const token = useToken();
+  const { enqueueSnackbar } = useSnackbar();
   // to change values in form
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,6 +27,7 @@ export default function AccountForm({ clicked }) {
   const [phone, setPhone] = useState(0);
   const [address, setAddress] = useState("");
   const [role, setRole] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     setName(clicked?.name || "");
@@ -27,35 +35,76 @@ export default function AccountForm({ clicked }) {
     setPhone(clicked?.phone || 0);
     setAddress(clicked?.address || "");
     setRole(clicked?.role || "");
+    setPassword("");
   }, [clicked]);
 
   const handleLogIn = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-
-    const submitData = {
-      email: data.get("email"),
-      password: data.get("password"),
-    };
-    // let error = false;
-    // if (
-    //   submitData.email.trim().length === 0 ||
-    //   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submitData.email)
-    // ) {
-    //   error = true;
-    //   setEmailError(true);
-    // }
-    // if (submitData.password.trim().length === 0) {
-    //   error = true;
-    //   setPasswordError(true);
-    // }
-    // if (error) return;
-
-    const response = validate(submitData);
-
-    if (response.status === 200) {
-      alert("Success");
+    setSubmitted(true);
+    let error = false;
+    if (name.trim().length < 5) {
+      error = true;
+      enqueueSnackbar("Name should be at least have 5 characters", {
+        variant: "error",
+      });
     }
+    if (email.trim().length < 5 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      error = true;
+      enqueueSnackbar("Incorrect Email", { variant: "error" });
+    }
+    if (!/^[0-9]{10}$/.test(phone)) {
+      error = true;
+      enqueueSnackbar("Phone number should be have 10 numbers", {
+        variant: "error",
+      });
+    }
+    if (address.trim().length < 5) {
+      error = true;
+      enqueueSnackbar("Address should be have at least 5 characters", {
+        variant: "error",
+      });
+    }
+    if (password.trim().length < 5) {
+      error = true;
+      enqueueSnackbar("Password should be have at least 5 characters", {
+        variant: "error",
+      });
+    }
+    if (error) return setSubmitted(false);
+    axios
+      .request({
+        method: clicked ? "PUT" : "POST",
+        url: getURL("users/admin/" + (clicked ? clicked?._id : "")),
+        headers: {
+          "x-auth-token": token,
+        },
+        data: {
+          name,
+          email,
+          password,
+          phone,
+          address,
+          role,
+        },
+      })
+      .then((response) => {
+        setSubmitted(false);
+        setClicked(null);
+        setName("");
+        setEmail("");
+        setPhone(0);
+        setAddress("");
+        setRole("");
+        setPassword("");
+        setRefresh((prev) => prev + 2);
+        enqueueSnackbar(response.data, { variant: "success" });
+      })
+      .catch((err) => {
+        setSubmitted(false);
+        enqueueSnackbar(err.response?.data || "500 Error Sending Request", {
+          variant: "error",
+        });
+      });
   };
 
   return (
@@ -72,7 +121,7 @@ export default function AccountForm({ clicked }) {
       </Typography>
       <Avatar
         sx={{ m: 1, height: 125, width: 125, bgcolor: "primary.main" }}
-        src={clicked?.picture}
+        src={clicked?.picture && getURL(clicked?.picture)}
         alt="Profile Picture"
       />
 
@@ -179,20 +228,19 @@ export default function AccountForm({ clicked }) {
           </Grid>
         </Grid>
 
-        <Button
+        <LoadingButton
+          loading={submitted}
+          loadingPosition="start"
+          startIcon={<Save />}
           type="submit"
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          {clicked ? "Update" : "Create"}
-        </Button>
+          {clicked && (submitted ? "Updating" : "Update")}
+          {!clicked && (submitted ? "Creating" : "Create")}
+        </LoadingButton>
       </Box>
     </Box>
   );
-  function validate(data) {
-    return {
-      status: 200,
-    };
-  }
 }

@@ -41,33 +41,39 @@ export default function GridList({ data, setClicked, title, type }) {
               gap: 2,
             }}
           >
-            {data.map((item, index) => (
-              <Item elevation={3} key={index}>
-                <CardActionArea
-                  onClick={() => {
-                    if (type === "location" || type === "incidents") {
+            {data.length === 0 ? (
+              <Typography component="div" variant="h6" textAlign="center">
+                No {title} found
+              </Typography>
+            ) : (
+              data.map((item, index) => (
+                <Item elevation={3} key={index}>
+                  <CardActionArea
+                    onClick={() => {
+                      if (type === "location" || type === "reports") {
+                        setTimeout(() => {
+                          setClicked(index + 1);
+                        });
+                        return;
+                      }
                       setTimeout(() => {
-                        setClicked(index + 1);
-                      });
-                      return;
-                    }
-                    setTimeout(() => {
-                      setClicked(item);
-                    }, 300);
-                  }}
-                >
-                  {type === "location" || type === "collectings" ? (
-                    <LocationCard data={item} />
-                  ) : type === "accounts" ? (
-                    <AccountCard data={item} />
-                  ) : type === "articles" ? (
-                    <ArticleCard data={item} />
-                  ) : type === "incidents" ? (
-                    <IncidentCard data={item} />
-                  ) : null}
-                </CardActionArea>
-              </Item>
-            ))}
+                        setClicked(item);
+                      }, 300);
+                    }}
+                  >
+                    {type === "location" || type === "collectings" ? (
+                      <LocationCard data={item} />
+                    ) : type === "accounts" ? (
+                      <AccountCard data={item} />
+                    ) : type === "articles" ? (
+                      <ArticleCard data={item} />
+                    ) : type === "incidents" || type === "reports" ? (
+                      <IncidentCard data={item} />
+                    ) : null}
+                  </CardActionArea>
+                </Item>
+              ))
+            )}
           </Box>
         </ThemeProvider>
       </Grid>

@@ -1,18 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import CustomThemeProvider from "../component/CustomThemeProvider";
-import { useUser } from "../hooks/AppContext";
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { useToken, useUser } from "../hooks/AppContext";
+import { Avatar, Box, Card, TextField, Typography } from "@mui/material";
 import Loader, { LoaderError } from "../component/Loader";
+import getURL from "../utils/getURL";
+import { LoadingButton } from "@mui/lab";
+import { Password } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
+import axios from "axios";
 
 export default function Profile() {
+  const token = useToken();
   const { user, error, loading } = useUser();
+  const [submitted, setSubmitted] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   return (
     <CustomThemeProvider>
       <Card
@@ -31,7 +32,7 @@ export default function Profile() {
           <>
             <Avatar
               elevation={3}
-              src={user?.picture}
+              src={getURL(user?.picture)}
               alt="User Picture"
               sx={{
                 height: 150,
@@ -72,6 +73,7 @@ export default function Profile() {
                   alignItems: "center",
                   justifyContent: "center",
                 }}
+                onClick={changePassword}
               >
                 <TextField
                   variant="standard"
@@ -85,9 +87,17 @@ export default function Profile() {
                   id="password"
                   autoComplete="current-password"
                 />
-                <Button variant="contained" type="submit" sx={{ mb: 2 }}>
-                  Change Password
-                </Button>
+                <LoadingButton
+                  loading={submitted}
+                  startIcon={<Password />}
+                  loadingPosition="start"
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  {submitted ? "Changing" : "Change"}
+                </LoadingButton>
               </Box>
             </Box>
           </>
@@ -95,4 +105,38 @@ export default function Profile() {
       </Card>
     </CustomThemeProvider>
   );
+  function changePassword(event) {
+    event.preventDefault();
+    if (submitted) return;
+    setSubmitted(true);
+    const data = new FormData(event.currentTarget);
+    const password = data.get("password");
+    if (password.trim().length < 5) {
+      setSubmitted(false);
+      return enqueueSnackbar("Password must be at least 5 characters long", {
+        variant: "error",
+      });
+    }
+    axios
+      .request({
+        method: "PATCH",
+        url: getURL("users/password"),
+        headers: {
+          "x-auth-token": token,
+        },
+        data: { password },
+      })
+      .then((response) => {
+        setSubmitted(false);
+        enqueueSnackbar(response?.data || "Successfully logged in", {
+          variant: "success",
+        });
+      })
+      .catch((err) => {
+        setSubmitted(false);
+        enqueueSnackbar(err.response?.data || "500 Error Sending Request", {
+          variant: "success",
+        });
+      });
+  }
 }

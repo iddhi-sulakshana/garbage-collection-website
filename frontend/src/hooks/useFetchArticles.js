@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
+import getURL from "../utils/getURL";
 
 export default function useFetchArticles(refresh) {
   const [articles, setArticles] = useState(null);
@@ -10,38 +12,20 @@ export default function useFetchArticles(refresh) {
     setError(null);
     fetchArticles();
   }, [refresh]);
-  async function fetchArticles() {
-    try {
-      setTimeout(() => {
-        setArticles([
-          {
-            id: 1,
-            title: "First Article",
-            description:
-              "loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem ",
-            picture: "https://picsum.photos/500/200",
-          },
-          {
-            id: 2,
-            title: "Second Article",
-            description:
-              "loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem ",
-            picture: "https://picsum.photos/500/200",
-          },
-          {
-            id: 3,
-            title: "Third Article",
-            description:
-              "loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem loremp ipsum dolor sit amet tempor lorem ",
-            picture: "https://picsum.photos/500/200",
-          },
-        ]);
+  function fetchArticles() {
+    axios
+      .request({
+        method: "GET",
+        url: getURL("articles"),
+      })
+      .then((res) => {
+        setArticles(res.data);
         setLoading(false);
-      }, 1000);
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-    }
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }
   return { articles, error, loading };
 }

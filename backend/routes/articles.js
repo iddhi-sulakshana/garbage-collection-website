@@ -28,7 +28,7 @@ router.post("/", auth, async (req, res) => {
 
   try {
     await article.save();
-    return res.send(article);
+    return res.send("Article Created Successfully");
   } catch (ex) {
     return res.status(400).send(ex.message);
   }
@@ -60,7 +60,7 @@ router.put("/:id", auth, async (req, res) => {
 
   try {
     await article.save();
-    return res.send(article);
+    return res.send("Article updated successfully");
   } catch (ex) {
     return res.status(400).send(ex.message);
   }

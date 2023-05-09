@@ -4,7 +4,7 @@ const { validPassword } = require("../utils/hash");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email }).select("-__v");
@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
   const token = user.generateAuthToken();
 
   res.set("Access-Control-Expose-Headers", "x-auth-token");
-  res.header("x-auth-token", token).send(user);
+  res.header("x-auth-token", token).send("Successfully logged in");
 });
 
 module.exports = router;

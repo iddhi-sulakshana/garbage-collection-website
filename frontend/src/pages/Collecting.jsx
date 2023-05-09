@@ -63,7 +63,11 @@ export default function Collecting() {
           overflowY: "scroll",
         }}
       >
-        <CollectingForm clicked={clicked} />
+        <CollectingForm
+          clicked={clicked}
+          setRefresh={setRefresh}
+          setClicked={setClicked}
+        />
       </Box>
       <Fab
         sx={{ position: "absolute", top: { xs: 350, md: 15 }, right: 10 }}
