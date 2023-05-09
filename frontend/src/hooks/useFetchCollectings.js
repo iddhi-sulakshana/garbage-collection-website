@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
+import getURL from "../utils/getURL";
 
 export default function useFetchCollectings(refresh) {
   const [collectings, setCollectings] = useState(null);
@@ -6,75 +8,25 @@ export default function useFetchCollectings(refresh) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
     fetchCollectings();
   }, [refresh]);
 
-  async function fetchCollectings() {
-    setLoading(true);
-    try {
-      setTimeout(() => {
-        setCollectings([
-          {
-            id: "1",
-            name: "Colombo City Centre",
-            location: {
-              lat: 6.927079,
-              lng: 79.861244,
-            },
-            description:
-              "Colombo City Centre is a location situated at lat: 6.927079, lng: 79.861244. It features a variety of images including a logo, a CMC logo, a location photo, and several other images. It also has a brief description of the location.",
-            picture: "location.jpg",
-            images: [
-              "logo.png",
-              "cmc-logo.png",
-              "location.jpg",
-              "notfound.jpg",
-              "ondev.jpg",
-            ],
-          },
-          {
-            id: "2",
-            name: "Colombo City Centre1",
-            location: {
-              lat: 6.927079,
-              lng: 79.871244,
-            },
-            description:
-              "Colombo City Centre is a location situated at lat: 6.927079, lng: 79.861244. It features a variety of images including a logo, a CMC logo, a location photo, and several other images. It also has a brief description of the location.",
-            picture: "location.jpg",
-            images: [
-              "logo.png",
-              "cmc-logo.png",
-              "location.jpg",
-              "notfound.jpg",
-              "ondev.jpg",
-            ],
-          },
-          {
-            id: "3",
-            name: "Colombo City Centre2",
-            location: {
-              lat: 6.957079,
-              lng: 79.871244,
-            },
-            description:
-              "Colombo City Centre is a location situated at lat: 6.927079, lng: 79.861244. It features a variety of images including a logo, a CMC logo, a location photo, and several other images. It also has a brief description of the location.",
-            picture: "location.jpg",
-            images: [
-              "logo.png",
-              "cmc-logo.png",
-              "location.jpg",
-              "notfound.jpg",
-              "ondev.jpg",
-            ],
-          },
-        ]);
+  function fetchCollectings() {
+    axios
+      .request({
+        method: "GET",
+        url: getURL("collectings"),
+      })
+      .then((res) => {
+        setCollectings(res.data);
         setLoading(false);
-      }, 1500);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }
   return { collectings, error, loading };
 }

@@ -132,7 +132,7 @@ export default function ArticleForm({ clicked, setClicked, setRefresh }) {
           alt="Article Picture"
         />
       ) : (
-        <Image sx={{ m: 1, height: 125, width: 125 }} />
+        <Image sx={{ m: 1, height: 125, width: 125 }} color="primary" />
       )}
 
       <Box
@@ -141,7 +141,12 @@ export default function ArticleForm({ clicked, setClicked, setRefresh }) {
         noValidate
         sx={{ mt: 1, width: "100%", pl: 5, pr: 5 }}
       >
-        <Button component="label" fullWidth variant="contained">
+        <Button
+          startIcon={<Image />}
+          component="label"
+          fullWidth
+          variant="contained"
+        >
           <input
             type="file"
             accept="image/*"

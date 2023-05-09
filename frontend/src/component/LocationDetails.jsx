@@ -2,6 +2,7 @@ import { Close, LocationOn } from "@mui/icons-material";
 import { Box, Fab, Typography } from "@mui/material";
 import React from "react";
 import Carousel from "react-material-ui-carousel";
+import getURL from "../utils/getURL";
 
 export default function LocationDetails({ location, setClicked }) {
   return (
@@ -20,7 +21,7 @@ export default function LocationDetails({ location, setClicked }) {
               objectFit: { xs: "fit", md: "cover" },
             }}
             alt={location.name}
-            src={item}
+            src={getURL(item)}
           />
         ))}
       </Carousel>

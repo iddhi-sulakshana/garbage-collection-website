@@ -35,7 +35,7 @@ router.post("/", auth, async (req, res) => {
     }
   } else {
     if (!images || !/image/.test(images.mimetype))
-      return res.status(400).send("Picture required or Invalid picture type");
+      return res.status(400).send("Images required or Invalid images type");
   }
   const error = validateCollecting(req.body);
   if (error) return res.status(400).send(error);
@@ -62,7 +62,7 @@ router.post("/", auth, async (req, res) => {
 
   try {
     await collecting.save();
-    return res.send(collecting);
+    return res.send("Successfully created Colleting place");
   } catch (ex) {
     return res.status(400).send(ex.message);
   }
@@ -86,6 +86,9 @@ router.put("/:id", auth, async (req, res) => {
     return res.status(400).send("Picture required or Invalid picture type");
 
   const images = req.files ? req.files.images || undefined : undefined;
+  console.log(images);
+  console.log("-------------");
+  console.log(req.files.images);
   if (Array.isArray(images)) {
     for (let i = 0; i < images.length; i++) {
       if (!/image/.test(images[i].mimetype))
@@ -133,7 +136,7 @@ router.put("/:id", auth, async (req, res) => {
 
   try {
     await collecting.save();
-    return res.send(collecting);
+    return res.send("Collecting place updated successfully");
   } catch (ex) {
     return res.status(400).send(ex.message);
   }
