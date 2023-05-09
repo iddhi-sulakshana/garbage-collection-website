@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Grid,
@@ -53,6 +52,7 @@ export default function CollectingForm({ clicked, setClicked, setRefresh }) {
           .then((blob) => {
             setImages((i) => [...i, blob]);
           });
+        return null;
       });
     }
   }, [clicked]);
@@ -375,9 +375,4 @@ export default function CollectingForm({ clicked, setClicked, setRefresh }) {
       </Box>
     </Box>
   );
-  function validate(data) {
-    return {
-      status: 200,
-    };
-  }
 }

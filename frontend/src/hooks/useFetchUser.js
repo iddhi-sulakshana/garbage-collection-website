@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import getURL from "../utils/getURL";
 
-export default function useFetchUser(token) {
+export default function useFetchUser(token, refresh) {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function useFetchUser(token) {
     }
     fetchUser();
     // eslint-disable-next-line
-  }, [token]);
+  }, [token, refresh]);
 
   function fetchUser() {
     axios

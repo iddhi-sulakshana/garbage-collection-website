@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Grid,
@@ -9,53 +8,131 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import SelectMap from "../SelectMap";
+import { useToken } from "../../hooks/AppContext";
+import { useSnackbar } from "notistack";
+import getURL from "../../utils/getURL";
+import { LoadingButton } from "@mui/lab";
+import { Delete, Image, Save } from "@mui/icons-material";
+import axios from "axios";
 
 // coordinates for colombo
 const center = {
   lat: 6.9271,
   lng: 79.8612,
 };
-export default function IncidentForm({ clicked }) {
+export default function IncidentForm({ clicked, setClicked, setRefresh }) {
+  const token = useToken();
+  const { enqueueSnackbar } = useSnackbar();
   // to change values in form
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [lng, setLng] = useState("");
   const [lat, setLat] = useState("");
+  const [picture, setPicture] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     setTitle(clicked?.title || "");
     setDescription(clicked?.description || "");
     setLat(clicked?.location.lat || center.lat);
     setLng(clicked?.location.lng || center.lng);
+    if (clicked) {
+      fetch(getURL(clicked?.picture))
+        .then((res) => res.blob())
+        .then((blob) => {
+          setPicture(blob);
+        });
+    } else {
+      setPicture(null);
+    }
   }, [clicked]);
 
-  const handleLogIn = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-
-    const submitData = {
-      email: data.get("email"),
-      password: data.get("password"),
-    };
-    // let error = false;
-    // if (
-    //   submitData.email.trim().length === 0 ||
-    //   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submitData.email)
-    // ) {
-    //   error = true;
-    //   setEmailError(true);
-    // }
-    // if (submitData.password.trim().length === 0) {
-    //   error = true;
-    //   setPasswordError(true);
-    // }
-    // if (error) return;
-
-    const response = validate(submitData);
-
-    if (response.status === 200) {
-      alert("Success");
+    setSubmitted(true);
+    let error = false;
+    if (title.trim().length < 5) {
+      error = true;
+      enqueueSnackbar("Title should be at least have 5 characters", {
+        variant: "error",
+      });
     }
+    if (description.trim().length < 5) {
+      error = true;
+      enqueueSnackbar("Description should be at least have 5 characters", {
+        variant: "error",
+      });
+    }
+    if (!picture) {
+      error = true;
+      enqueueSnackbar("Please select a picture", {
+        variant: "error",
+      });
+    }
+    if (error) {
+      setSubmitted(false);
+      return;
+    }
+    axios
+      .request({
+        method: clicked ? "PUT" : "POST",
+        url: getURL("incidents/" + (clicked ? clicked._id : "")),
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "x-auth-token": token,
+        },
+        data: {
+          title,
+          description,
+          lat,
+          lng,
+          picture,
+        },
+      })
+      .then((res) => {
+        enqueueSnackbar(res.data, {
+          variant: "success",
+        });
+        setSubmitted(false);
+        setClicked(null);
+        setTitle("");
+        setDescription("");
+        setLat(center.lat);
+        setLng(center.lng);
+        setPicture(null);
+        setRefresh((prev) => prev + 2);
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.response?.data || "500 Error Sending Request", {
+          variant: "error",
+        });
+        setSubmitted(false);
+      });
+  };
+
+  const handleDelete = () => {
+    setSubmitted(true);
+    axios
+      .delete(getURL("incidents/" + clicked._id), {
+        headers: {
+          "x-auth-token": token,
+        },
+      })
+      .then((res) => {
+        enqueueSnackbar(res.data, {
+          variant: "success",
+        });
+        setClicked(null);
+        setRefresh((prev) => prev + 2);
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.response?.data || "500 Error Sending Request", {
+          variant: "error",
+        });
+      })
+      .finally(() => {
+        setSubmitted(false);
+      });
   };
 
   return (
@@ -70,30 +147,47 @@ export default function IncidentForm({ clicked }) {
       <Typography variant="h4" component="div">
         {clicked ? "Update" : "Report"} Incident
       </Typography>
-      {clicked ? (
+      {picture ? (
         <Box
           component="img"
           sx={{
             m: 1,
             height: "25vh",
           }}
-          src={clicked?.picture}
-          alt="Collecting Picture"
+          src={URL.createObjectURL(picture)}
+          alt="Article Picture"
         />
       ) : (
-        <Avatar
-          sx={{ m: 1, height: 125, width: 125, bgcolor: "primary.main" }}
-          alt="Collecting Picture"
-        />
+        <Image sx={{ m: 1, height: 125, width: 125 }} color="primary" />
       )}
 
       <Box
         component="form"
-        onSubmit={handleLogIn}
+        onSubmit={handleSubmit}
         noValidate
         sx={{ mt: 1, width: "100%", pl: 5, pr: 5 }}
       >
         <Grid container spacing={2}>
+          <Grid item xs={12} sm={12}>
+            <Button
+              startIcon={<Image />}
+              component="label"
+              fullWidth
+              variant="contained"
+            >
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return setPicture(null);
+                  setPicture(new Blob([file], { type: file.type }));
+                }}
+              />
+              Select Image
+            </Button>
+          </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               onChange={(e) => {
@@ -171,34 +265,37 @@ export default function IncidentForm({ clicked }) {
             >
               <SelectMap setLat={setLat} setLng={setLng} lat={lat} lng={lng} />
             </Box>
+          </Grid>{" "}
+          <Grid item xs={6}>
+            {clicked ? (
+              <LoadingButton
+                loading={submitted}
+                loadingPosition="start"
+                startIcon={<Delete />}
+                onClick={handleDelete}
+                fullWidth
+                color="error"
+                variant="contained"
+              >
+                {submitted ? "Deleting" : "Delete"}
+              </LoadingButton>
+            ) : null}
+          </Grid>
+          <Grid item xs={6}>
+            <LoadingButton
+              loading={submitted}
+              loadingPosition="start"
+              startIcon={<Save />}
+              type="submit"
+              fullWidth
+              variant="contained"
+            >
+              {clicked && (submitted ? "Updating" : "Update")}
+              {!clicked && (submitted ? "Creating" : "Create")}
+            </LoadingButton>
           </Grid>
         </Grid>
-
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {clicked ? "Update" : "Create"}
-        </Button>
-        {clicked ? (
-          <Button
-            type="submit"
-            fullWidth
-            color="error"
-            variant="contained"
-            sx={{ mt: 1, mb: 2 }}
-          >
-            Delete
-          </Button>
-        ) : null}
       </Box>
     </Box>
   );
-  function validate(data) {
-    return {
-      status: 200,
-    };
-  }
 }

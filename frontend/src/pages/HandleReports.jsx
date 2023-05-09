@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import LocationsMap from "../component/LocationsMap";
-import { useAppBarHei } from "../hooks/AppContext";
+import { useAppBarHei, useToken } from "../hooks/AppContext";
 import { Box, Fab } from "@mui/material";
 import GridList from "../component/GridList";
 import Loader, { LoaderError } from "../component/Loader";
@@ -9,9 +9,10 @@ import useFetchPendings from "../hooks/useFetchPendings";
 import ReportDetails from "../component/ReportDetails";
 
 export default function HandleReports() {
+  const token = useToken();
   const { height } = useAppBarHei();
   const [refresh, setRefresh] = useState(0);
-  const { pendings, error, loading } = useFetchPendings(refresh);
+  const { pendings, error, loading } = useFetchPendings(token, refresh);
   const [clicked, setClicked] = useState(null);
 
   return (

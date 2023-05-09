@@ -6,8 +6,10 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { LocationOn } from "@mui/icons-material";
 import { Chip } from "@mui/material";
+import getURL from "../../utils/getURL";
 
 export default function IncidentCard({ data }) {
+  console.log(data);
   return (
     <Card sx={{ display: "flex", justifyContent: "space-between" }}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -53,7 +55,7 @@ export default function IncidentCard({ data }) {
       <CardMedia
         component="img"
         sx={{ width: 100, height: "auto", minHeight: 100 }}
-        image={data.picture}
+        image={getURL(data.picture)}
         alt="Live from space album cover"
       />
     </Card>

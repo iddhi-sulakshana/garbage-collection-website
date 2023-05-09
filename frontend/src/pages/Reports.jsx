@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import LocationsMap from "../component/LocationsMap";
-import { useAppBarHei } from "../hooks/AppContext";
+import { useAppBarHei, useToken } from "../hooks/AppContext";
 import { Box, Fab } from "@mui/material";
 import GridList from "../component/GridList";
 import Loader, { LoaderError } from "../component/Loader";
@@ -9,11 +9,11 @@ import useFetchReports from "../hooks/useFetchReports";
 import IncidentDetails from "../component/IncidentDetails";
 
 export default function Reports() {
+  const token = useToken();
   const { height } = useAppBarHei();
   const [refresh, setRefresh] = useState(0);
-  const { reports, loading, error } = useFetchReports(refresh);
+  const { reports, loading, error } = useFetchReports(token, refresh);
   const [clicked, setClicked] = useState(null);
-
   return (
     <Box
       sx={{
@@ -38,6 +38,7 @@ export default function Reports() {
           <IncidentDetails
             location={reports[clicked - 1]}
             setClicked={setClicked}
+            setRefresh={setRefresh}
           />
         ) : loading ? (
           <Loader />
@@ -48,7 +49,7 @@ export default function Reports() {
             title="Reports"
             data={reports}
             setClicked={setClicked}
-            type={"incidents"}
+            type={"reports"}
           />
         )}
       </Box>
