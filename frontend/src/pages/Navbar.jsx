@@ -17,6 +17,8 @@ import Logo from "../component/Logo";
 import { useEffect, useRef, useState } from "react";
 import { useAppBarHei, useToken, useUser } from "../hooks/AppContext";
 import { Loader1 } from "../component/Loader";
+import getURL from "../utils/getURL";
+import { useSnackbar } from "notistack";
 
 const commonPages = [
   { name: "Home", path: "/" },
@@ -37,8 +39,9 @@ const settings = [
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   const token = useToken();
-  const { user, error, loading } = useUser();
+  const { user, error, loading } = useUser(token);
   const { setHeight } = useAppBarHei();
   const appBarRef = useRef(null);
 
@@ -48,19 +51,22 @@ export default function Navbar() {
 
   useEffect(() => {
     setHeight(appBarRef.current.clientHeight);
-    if (!token || !user) return setPages([...commonPages]);
     if (loading) return;
-    if (error) alert("Error Getting User details");
+    if (!token) return setPages([...commonPages]);
+    if (error) enqueueSnackbar(error, { variant: "error" });
 
-    if (user.role === "admin") {
+    if (user?.role === "admin") {
       setPages([...commonPages, ...adminPages]);
-    } else if (user.role === "gtf") {
+    } else if (user?.role === "gtf") {
       setPages([...commonPages, ...gtfPages]);
-    } else if (user.role === "cs") {
+    } else if (user?.role === "cs") {
       setPages([...commonPages, ...csPages]);
-    } else if (user.role === "gc") {
+    } else if (user?.role === "gc") {
       setPages([...commonPages, ...gcPages]);
+    } else {
+      setPages([...commonPages]);
     }
+    // eslint-disable-next-line
   }, [token, loading, error, user, setHeight]);
 
   const handleOpenNavMenu = (event) => {
@@ -150,7 +156,7 @@ export default function Navbar() {
                     {loading ? (
                       <Loader1 />
                     ) : (
-                      <Avatar alt={user?.name} src={user?.picture} />
+                      <Avatar alt={user?.name} src={getURL(user?.picture)} />
                     )}
                   </IconButton>
                 </Tooltip>

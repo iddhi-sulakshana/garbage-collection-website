@@ -13,6 +13,7 @@ import { useAppBarHei } from "../hooks/AppContext";
 import useFetchArticles from "../hooks/useFetchArticles";
 import Loader, { LoaderError } from "../component/Loader";
 import ArticleDialog from "../component/ArticleDialog";
+import getURL from "../utils/getURL";
 export default function Articles() {
   const { height } = useAppBarHei();
   const { articles, loading, error } = useFetchArticles();
@@ -56,7 +57,7 @@ export default function Articles() {
                 <CardMedia
                   component="img"
                   height={250}
-                  image={article.picture}
+                  image={getURL(article.picture)}
                   alt="random"
                 />
                 <CardContent sx={{ flexGrow: 1 }}>

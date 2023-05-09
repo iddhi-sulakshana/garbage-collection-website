@@ -16,14 +16,12 @@ import Articles from "./pages/Articles";
 import ReportIncidents from "./pages/ReportIncidents";
 import Reports from "./pages/Reports";
 import HandleReports from "./pages/HandleReports";
+import Test from "./pages/Test";
 export default function App() {
   const setToken = useSetToken();
-  const token = localStorage.getItem("x-token");
   useEffect(() => {
-    if (token) {
-      setToken(token);
-    }
-  }, [token, setToken]);
+    setToken(localStorage.getItem("x-token"));
+  }, [setToken]);
   return (
     <>
       <Navbar />
@@ -41,6 +39,7 @@ export default function App() {
         <Route path="/report-incidents" element={<ReportIncidents />} />
         <Route path="/handle-reports" element={<HandleReports />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/test" element={<Test />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </>

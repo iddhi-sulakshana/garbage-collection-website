@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import getURL from "../utils/getURL";
 
 export default function ArticleDialog({ open, data, handleClose }) {
   return (
@@ -37,7 +38,7 @@ export default function ArticleDialog({ open, data, handleClose }) {
         <Box
           component="img"
           sx={{ height: 250, width: "100%" }}
-          src={data?.picture}
+          src={getURL(data?.picture)}
           alt="random"
         />
         <Typography gutterBottom>{data?.description}</Typography>

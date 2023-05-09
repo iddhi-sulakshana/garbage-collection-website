@@ -65,7 +65,11 @@ export default function Accounts() {
           overflowY: "scroll",
         }}
       >
-        <AccountForm clicked={clicked} />
+        <AccountForm
+          clicked={clicked}
+          setClicked={setClicked}
+          setRefresh={setRefresh}
+        />
       </Box>
       <Fab
         sx={{ position: "absolute", top: { xs: 350, md: 15 }, right: 10 }}

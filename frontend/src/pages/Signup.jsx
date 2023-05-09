@@ -2,7 +2,6 @@ import React from "react";
 import {
   Avatar,
   Box,
-  Button,
   Container,
   CssBaseline,
   Grid,
@@ -13,7 +12,7 @@ import {
 } from "@mui/material";
 import { LockOutlined } from "@mui/icons-material";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 import getURL from "../utils/getURL";
@@ -28,6 +27,7 @@ export default function Signup() {
   const [phoneError, setPhoneError] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignup = (event) => {
     event.preventDefault();
@@ -88,19 +88,19 @@ export default function Signup() {
       .request({
         method: "post",
         maxBodyLength: Infinity,
-        url: getURL(),
+        url: getURL("users/signup"),
         data: submitData,
       })
       .then((response) => {
+        setSubmitted(false);
         enqueueSnackbar(response.data, { variant: "success" });
+        navigate("/login");
       })
       .catch((error) => {
+        setSubmitted(false);
         enqueueSnackbar(error.response?.data || "500 Error Sending Request", {
           variant: "error",
         });
-      })
-      .finally(() => {
-        setSubmitted(false);
       });
   };
 
@@ -255,6 +255,7 @@ export default function Signup() {
             <LoadingButton
               loading={submitted}
               loadingPosition="start"
+              startIcon={<LockOutlined />}
               type="submit"
               fullWidth
               variant="contained"

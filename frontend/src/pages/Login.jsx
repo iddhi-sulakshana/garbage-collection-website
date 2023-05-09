@@ -2,7 +2,6 @@ import { ThemeProvider } from "@emotion/react";
 import {
   Avatar,
   Box,
-  Button,
   Container,
   CssBaseline,
   FormControlLabel,
@@ -16,15 +15,21 @@ import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSetToken, useToken } from "../hooks/AppContext";
+import { useSnackbar } from "notistack";
+import axios from "axios";
+import getURL from "../utils/getURL";
+import { LoadingButton } from "@mui/lab";
 
 const theme = createTheme();
 
 export default function Login() {
+  const [submitted, setSubmitted] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const token = useToken();
   const setToken = useSetToken();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
     if (token) {
       navigate("/");
@@ -33,35 +38,60 @@ export default function Login() {
 
   const handleLogIn = (event) => {
     event.preventDefault();
+    if (submitted) return;
+    setSubmitted(true);
     const data = new FormData(event.currentTarget);
 
     const submitData = {
       email: data.get("email"),
       password: data.get("password"),
     };
-    // let error = false;
-    // if (
-    //   submitData.email.trim().length === 0 ||
-    //   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submitData.email)
-    // ) {
-    //   error = true;
-    //   setEmailError(true);
-    // }
-    // if (submitData.password.trim().length === 0) {
-    //   error = true;
-    //   setPasswordError(true);
-    // }
-    // if (error) return;
-
-    const response = validate(submitData);
-
-    if (response.status === 200) {
-      localStorage.setItem("x-token", "12312313");
-      setToken("12312313");
-      navigate("/");
-    } else {
-      alert("Login failed: " + response.message);
+    let error = false;
+    if (
+      submitData.email.trim().length < 5 ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submitData.email)
+    ) {
+      error = true;
+      setEmailError(true);
+      enqueueSnackbar("Incorrect Email", { variant: "error" });
     }
+    if (submitData.password.trim().length < 5) {
+      error = true;
+      setPasswordError(true);
+      enqueueSnackbar("Incorrect password", { variant: "error" });
+    }
+    if (error) return setSubmitted(false);
+
+    axios
+      .request({
+        method: "POST",
+        url: getURL("auth/login"),
+        data: submitData,
+        maxBodyLength: Infinity,
+      })
+      .then((response) => {
+        localStorage.setItem("x-token", response.headers.get("x-auth-token"));
+        setToken(response.headers.get("x-auth-token"));
+        enqueueSnackbar(response?.data || "Successfully logged in", {
+          variant: "success",
+        });
+        setSubmitted(false);
+        navigate("/");
+      })
+      .catch((error) => {
+        setSubmitted(false);
+        enqueueSnackbar(error.response?.data || "500 Error Sending Request", {
+          variant: "error",
+        });
+      });
+
+    // if (response.status === 200) {
+    //   localStorage.setItem("x-token", "12312313");
+    //   setToken("12312313");
+    //   navigate("/");
+    // } else {
+    //   alert("Login failed: " + response.message);
+    // }
   };
   return (
     <ThemeProvider theme={theme}>
@@ -91,7 +121,7 @@ export default function Login() {
               onChange={(e) => {
                 if (
                   e.target.value.trim === "" ||
-                  e.target.value.trim().length === 0 ||
+                  e.target.value.trim().length < 5 ||
                   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)
                 )
                   return setEmailError(true);
@@ -111,7 +141,7 @@ export default function Login() {
               onChange={(e) => {
                 if (
                   e.target.value.trim === "" ||
-                  e.target.value.trim().length === 0
+                  e.target.value.trim().length < 5
                 )
                   return setPasswordError(true);
                 setPasswordError(false);
@@ -130,14 +160,17 @@ export default function Login() {
               control={<CheckBox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Button
+            <LoadingButton
+              loading={submitted}
+              startIcon={<LockOutlined />}
+              loadingPosition="start"
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
-            </Button>
+              {submitted ? "Signing in..." : "Sign In"}
+            </LoadingButton>
             <Grid container>
               <Grid item xs>
                 <Link to="/ondev" variant="body2">
@@ -156,15 +189,3 @@ export default function Login() {
     </ThemeProvider>
   );
 }
-
-function validate(data) {
-  return { status: 200, message: "Sucecss" };
-}
-
-// function validate(data) {
-//   if (data.email !== "123@asd.co")
-//     return { status: 401, message: "Invalid email" };
-//   if (data.password !== "123")
-//     return { status: 401, message: "Invalid password" };
-//   return { status: 200, message: "Success" };
-// }

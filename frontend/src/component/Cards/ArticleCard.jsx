@@ -4,6 +4,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import getURL from "../../utils/getURL";
 
 export default function ArticleCard({ data }) {
   return (
@@ -21,7 +22,7 @@ export default function ArticleCard({ data }) {
       <CardMedia
         component="img"
         sx={{ width: 100, height: "auto", minHeight: 100 }}
-        image={data.picture}
+        image={getURL(data?.picture)}
         alt="Live from space album cover"
       />
     </Card>

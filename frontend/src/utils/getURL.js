@@ -1,2 +1,2 @@
 // eslint-disable-next-line
-export default () => "http://localhost:3001/";
+export default (location) => "http://localhost:3001/" + location;
