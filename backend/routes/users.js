@@ -6,6 +6,7 @@ const { isValidObjectId } = require("mongoose");
 const fs = require("fs");
 const saveImage = require("../utils/saveImage");
 const router = express.Router();
+require("../utils/firstRun")();
 
 // get all the gc and cs users not equal to gtf or admin
 router.get("/admin", auth, async (req, res) => {
