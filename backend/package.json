@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "protest": "jest --watchAll --verbose --coverage",
+    "test": "jest --watchAll",
     "dev": "nodemon index.js"
   },
   "keywords": [],
