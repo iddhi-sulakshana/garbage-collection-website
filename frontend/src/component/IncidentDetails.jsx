@@ -46,6 +46,14 @@ export default function IncidentDetails({ location, setClicked, setRefresh }) {
         <LocationOn />
         {location?.location.lat + " " + location?.location.lng}
       </Typography>
+      <Typography
+        variant="subtitle4"
+        color="text.secondary"
+        component="div"
+        sx={{ pt: 1 }}
+      >
+        {location?.comment || "no comment"}
+      </Typography>
       <LoadingButton
         loading={submitted}
         loadingPosition="start"

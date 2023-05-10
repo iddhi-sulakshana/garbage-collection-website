@@ -19,6 +19,7 @@ function validate(incident) {
     picture: Joi.string().min(5).max(1024),
     status: Joi.string().valid("pending", "accepted", "rejected", "completed"),
     flag: Joi.boolean(),
+    comment: Joi.string().min(5).max(20),
   });
   const result = schema.validate(incident);
   if (result.error) return result.error.details[0].message;
