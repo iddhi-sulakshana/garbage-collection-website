@@ -6,8 +6,10 @@ const Incident = model("Incident", incidentSchema);
 
 function validate(incident) {
   const schema = new Joi.object({
-    id: Joi.string().regex(/^[0-9a-fA-F]{24}$/),
-    user: Joi.string().regex(/^[0-9a-fA-F]{24}$/),
+    _id: Joi.string().regex(/^[0-9a-fA-F]{24}$/),
+    user: Joi.string()
+      .regex(/^[0-9a-fA-F]{24}$/)
+      .required(),
     title: Joi.string().min(5).max(20).required(),
     location: Joi.object({
       lat: Joi.number().min(-90).max(90).required(),
@@ -19,7 +21,6 @@ function validate(incident) {
     flag: Joi.boolean(),
   });
   const result = schema.validate(incident);
-  console.log(result.error);
   if (result.error) return result.error.details[0].message;
   return null;
 }
