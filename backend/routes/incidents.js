@@ -39,9 +39,15 @@ router.patch("/accept/:id", auth, async (req, res) => {
   if (isValidObjectId(req.params.id) === false)
     return res.status(400).send("Invalid id");
 
+  console.log(req.body);
+
   const incident = await Incident.findOneAndUpdate(
     { _id: req.params.id, status: "pending" },
-    { status: "accepted", flag: req.body.flag || false },
+    {
+      status: "accepted",
+      flag: req.body.flag || false,
+      comment: req.body.comment,
+    },
     { new: true }
   );
   if (!incident) return res.status(404).send("Incident not found");
@@ -57,7 +63,7 @@ router.patch("/reject/:id", auth, async (req, res) => {
 
   const incident = await Incident.findOneAndUpdate(
     { _id: req.params.id, status: "pending" },
-    { status: "rejected", flag: false },
+    { status: "rejected", flag: false, comment: undefined },
     { new: true }
   );
   if (!incident) return res.status(404).send("Incident not found");
@@ -126,6 +132,7 @@ router.put("/:id", auth, async (req, res) => {
   req.body.user = req.user._id;
   req.body.status = "pending";
   req.body.flag = false;
+  req.body.comment = undefined;
 
   const picture = req.files ? req.files.picture || undefined : undefined;
   if (!picture || !/image/.test(picture.mimetype))

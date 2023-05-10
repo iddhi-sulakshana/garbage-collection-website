@@ -48,4 +48,9 @@ module.exports = new Schema({
     type: Boolean,
     default: false,
   },
+  comment: {
+    type: String,
+    minlength: 5,
+    maxlenth: 20,
+  },
 });

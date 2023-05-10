@@ -9,7 +9,6 @@ import { Chip } from "@mui/material";
 import getURL from "../../utils/getURL";
 
 export default function IncidentCard({ data }) {
-  console.log(data);
   return (
     <Card sx={{ display: "flex", justifyContent: "space-between" }}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>

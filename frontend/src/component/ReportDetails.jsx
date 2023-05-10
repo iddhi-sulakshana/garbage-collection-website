@@ -150,6 +150,7 @@ export default function ReportDetails({
         },
         data: {
           flag,
+          comment,
         },
       })
       .then((res) => {
