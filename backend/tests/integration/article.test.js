@@ -1,8 +1,6 @@
 const request = require("supertest");
 const server = require("./server");
 const { Article } = require("../../models/article");
-const { User } = require("../../models/user");
-const fs = require("fs");
 const path = require("path");
 
 describe("INTEGRATION TEST : Article route", () => {

@@ -74,11 +74,11 @@ router.post("/signup", async (req, res) => {
 // update user
 router.put("/", auth, async (req, res) => {
   req.body.role = req.user.role;
+  req.body.password = "11111";
   const errorMsg = validateUser(req.body);
   if (errorMsg) return res.status(400).send(errorMsg);
-
+  delete req.body.password;
   const picture = req.files?.picture;
-  console.log(picture);
   if (picture && !/image/.test(picture.mimetype))
     return res.status(400).send("Invalid image file");
 
