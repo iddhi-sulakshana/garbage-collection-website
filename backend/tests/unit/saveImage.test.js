@@ -1,4 +1,4 @@
-const saveImage = require("../utils/saveImage");
+const saveImage = require("../../utils/saveImage");
 describe("UNIT TEST : Save image", () => {
   it("should save image", async () => {
     const image = {

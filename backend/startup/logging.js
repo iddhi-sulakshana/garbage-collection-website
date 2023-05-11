@@ -19,15 +19,6 @@ module.exports = function () {
     winston.add(
       new winston.transports.File({ filename: "./logs/logfile.log" })
     );
-    require("winston-mongodb");
-    winston.add(
-      new winston.transports.MongoDB({
-        db: process.env.NODE_ENV
-          ? `${process.env.DB}_${process.env.NODE_ENV}`
-          : process.env.DB,
-        level: "error",
-      })
-    );
   }
   return winston;
 };

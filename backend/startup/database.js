@@ -8,9 +8,10 @@ module.exports = function () {
   winston.info("Connecting to MongoDB at " + databaseString + "...");
   mongoose
     .connect(databaseString)
-    .then(() =>
-      winston.info("Connected to MongoDB at " + databaseString + " ✅")
-    )
+    .then(() => {
+      winston.info("Connected to MongoDB at " + databaseString + " ✅");
+      require("../utils/firstRun")();
+    })
     .catch((ex) => {
       winston.error(
         "Failed to connect to MongoDB at " + databaseString + " ❌"

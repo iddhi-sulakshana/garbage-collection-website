@@ -1,4 +1,4 @@
-const { validateIncident } = require("../models/incident");
+const { validateIncident } = require("../../models/incident");
 const mongoose = require("mongoose");
 
 describe("UNIT TEST : Validate Incident", () => {

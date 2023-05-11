@@ -1,4 +1,4 @@
-const { validateArticle } = require("../models/article");
+const { validateArticle } = require("../../models/article");
 const mongoose = require("mongoose");
 
 describe("UNIT TEST : Validate Article", () => {
