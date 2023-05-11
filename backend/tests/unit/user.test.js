@@ -1,6 +1,6 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const { User, validateUser } = require("../models/user");
+const { User, validateUser } = require("../../models/user");
 const mongoose = require("mongoose");
 describe("UNIT TEST : Authetication token", () => {
   it("Should generate a valid JWT token", () => {

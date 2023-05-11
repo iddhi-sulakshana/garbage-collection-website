@@ -52,6 +52,10 @@ router.patch("/accept/:id", auth, async (req, res) => {
   );
   if (!incident) return res.status(404).send("Incident not found");
 
+  if (req.body.flag) {
+    return res.send("Emergency incident accepted");
+  }
+
   return res.send("Incident accepted");
 });
 

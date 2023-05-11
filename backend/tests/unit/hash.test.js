@@ -1,4 +1,4 @@
-const { encrypt, validPassword } = require("../utils/hash");
+const { encrypt, validPassword } = require("../../utils/hash");
 const password = "123456";
 let hash = "";
 describe("UNIT TEST : Password encryption", () => {

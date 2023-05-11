@@ -1,4 +1,4 @@
-const { validateCollecting } = require("../models/collecting");
+const { validateCollecting } = require("../../models/collecting");
 const mongoose = require("mongoose");
 
 describe("UNIT TEST : Validate Collecting", () => {
