@@ -9,7 +9,7 @@ const router = express.Router();
 
 // get all the gc and cs users not equal to gtf or admin
 router.get("/admin", auth, async (req, res) => {
-  if (req.user.role !== "admin") return res.send(403).send("Not allowed");
+  if (req.user.role !== "admin") return res.status(403).send("Not allowed");
 
   const users = await User.find({
     role: { $nin: ["gtf", "admin"] },
@@ -28,7 +28,7 @@ router.get("/me", auth, async (req, res) => {
 
 // create GC and CS members
 router.post("/admin", auth, async (req, res) => {
-  if (req.user.role !== "admin") return res.send(403).send("Not allowed");
+  if (req.user.role !== "admin") return res.status(403).send("Not allowed");
 
   const errorMsg = validateUser(req.body);
   if (errorMsg) return res.status(400).send(errorMsg);

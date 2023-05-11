@@ -11,7 +11,10 @@ module.exports = function () {
   }
 
   // exception logging for file
-  if (process.env.NODE_ENV !== "development") {
+  if (
+    process.env.NODE_ENV !== "development" &&
+    process.env.NODE_ENV !== "test"
+  ) {
     winston.exceptions.handle(
       new winston.transports.File({ filename: "./logs/exceptions.log" })
     );

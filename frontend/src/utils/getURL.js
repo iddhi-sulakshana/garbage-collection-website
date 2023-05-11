@@ -1,2 +1,3 @@
 // eslint-disable-next-line
-export default (location) => "http://localhost:3001/" + location;
+export default (location) =>
+  "https://grabage-collection-website.onrender.com/" + location;

@@ -93,14 +93,13 @@ export default function IncidentDetails({ location, setClicked, setRefresh }) {
       })
       .then((res) => {
         enqueueSnackbar(res.data, { variant: "success" });
+        setSubmitted(false);
         setClicked(null);
         setRefresh((prev) => prev + 2);
       })
       .catch((err) => {
-        enqueueSnackbar(err.response?.data, { variant: "error" });
-      })
-      .finally(() => {
         setSubmitted(false);
+        enqueueSnackbar(err.response?.data, { variant: "error" });
       });
   }
 }
