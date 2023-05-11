@@ -7,6 +7,8 @@ const router = express.Router();
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
+  if (!password) return res.status(400).send("Invalid password");
+
   const user = await User.findOne({ email }).select("-__v");
   if (!user) return res.status(400).send("Invalid email address");
 

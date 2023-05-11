@@ -151,10 +151,10 @@ describe("UNIT TEST : Validate User", () => {
     const result = validateUser(user);
     expect(result).toBe('"role" must be one of [admin, gtf, gc, cs]');
   });
-  it("Should return null even user's password isnt exist ", () => {
+  it("Should return error if user's password isnt exist ", () => {
     delete user.password;
     const result = validateUser(user);
-    expect(result).toBeNull();
+    expect(result).toBe('"password" is required');
   });
   it("Should return error because user's password is less than 5 characters", () => {
     user.password = "1234";
